@@ -81,7 +81,6 @@ public class ClientAgent_ResolveName extends TickerBehaviour {
 			if (rootServerDescriptor == null || rootServerDescriptor.length==0) {
 				try {
 					rootServerDescriptor = DFService.search(myAgent, template, all);
-					System.out.println("Client "+myAgent.getAID().getLocalName()+" - found RootServer "+rootServerDescriptor[0].getName().getLocalName());
 				} catch (final FIPAException fe) {
 					fe.printStackTrace();
 				}
@@ -91,6 +90,7 @@ public class ClientAgent_ResolveName extends TickerBehaviour {
 		     * Se ho trovato il RootSever, allora posso richiedere la risoluzione del nome dell'host.
 		     */
 		    if (rootServerDescriptor != null && rootServerDescriptor.length != 0) {
+		    	System.out.println("Client "+myAgent.getAID().getLocalName()+" - found RootServer "+rootServerDescriptor[0].getName().getLocalName());
 		    	hostToResolve = hosts.get(new Random().nextInt(hosts.size()));
 	    		request.addReceiver(rootServerDescriptor[0].getName());
 	    		request.setOntology("RESOLVE");
