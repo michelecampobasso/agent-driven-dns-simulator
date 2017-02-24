@@ -32,13 +32,16 @@ public class TheInternetAgent extends Agent {
 
 		private ACLMessage inform;
 		private DFAgentDescription template;
-		//private DFAgentDescription templateClient;
+		private DFAgentDescription templateClient;
 		private ServiceDescription sd;
-		//private ServiceDescription sdClient;
+		private ServiceDescription sdClient;
 		private SearchConstraints all;
 		
 		private DFAgentDescription[] rootServerDescriptor;
-		//private DFAgentDescription[] clientDescriptor;
+		private DFAgentDescription[] clientDescriptor;
+		
+		private String newHost;
+		private String newHostAddress;
 		
 		public TheInternetAgent_CreateNewHost(Agent a, long period) {
 			super(a, period);
@@ -52,10 +55,10 @@ public class TheInternetAgent extends Agent {
 		    sd.setType("ROOTSERVER");
 		    template.addServices(sd);
 		    
-			/*templateClient = new DFAgentDescription();
+			templateClient = new DFAgentDescription();
 		    sdClient = new ServiceDescription();
 		    sdClient.setType("CLIENT");
-		    templateClient.addServices(sdClient);*/
+		    templateClient.addServices(sdClient);
 
 		    all = new SearchConstraints();
 		    all.setMaxResults(new Long(-1));
@@ -82,53 +85,56 @@ public class TheInternetAgent extends Agent {
 		    	/*
 		    	 * Creazione di un nuovo host ed invio informazione al RootServer
 		    	 */
+		    	newHost = HostGenerator.generateHostName();
+		    	newHostAddress = HostGenerator.generateHostAddress();
 		    	inform = new ACLMessage(ACLMessage.INFORM);
 		    	inform.addReceiver(rootServerDescriptor[0].getName());
 		    	inform.setOntology("NEWHOST");
-	    		inform.setContent(HostGenerator.generateHostName()+" "+HostGenerator.generateHostAddress());
+	    		inform.setContent(newHost+" "+newHostAddress);
 	    		System.out.println("The Internet - sending host "+ inform.getContent() + " to add to " + rootServerDescriptor[0].getName().getLocalName() + "..." );
 	    		this.myAgent.send(inform);
-	    	}
+	    	
 		    
-		    /*
-		     * Scrivo sul file degli hosts il nuovo host aggiunto alla rete.
-		     */
-		    
-			/*BufferedWriter bw;
-			try {
-				bw = new BufferedWriter(new FileWriter("hosts.txt"));
-				bw.write(inform.getContent().split("\\s+")[0]);
-				bw.close();
-			} catch (IOException e) {
-				// TODO Auto-generated catch block
-				e.printStackTrace();
-			}*/
-		    
-		    /*
-		     * Informo i client attivi del nuovo host aggiunto.
-		     */
-		    /*try {
-				clientDescriptor = DFService.search(myAgent, template, all);
-			} catch (final FIPAException fe) {
-				fe.printStackTrace();
-			}
-		    
-		    if (clientDescriptor != null && clientDescriptor.length != 0) {
-		    	System.out.println("The Internet - found Client(s) to inform about the new host...");*/
-		    	
-		    	/*
-		    	 * Creazione di un nuovo host ed invio ai client attivi
-		    	 */
-		    	/*for (int i=0; i<clientDescriptor.length; i++) {
-			    	inform = new ACLMessage(ACLMessage.INFORM);
-			    	inform.addReceiver(clientDescriptor[i].getName());
-			    	inform.setOntology("NEWHOST");
-			    	inform.setContent(HostGenerator.generateHostName());
-		    		System.out.println("The Internet - sending host "+ inform.getContent() + " to add to " + clientDescriptor[0].getName().getLocalName() + "..." );
-		    		this.myAgent.send(inform);
+			    /*
+			     * Scrivo sul file degli hosts il nuovo host aggiunto alla rete.
+			     */
+			    
+				BufferedWriter bw;
+				try {
+					bw = new BufferedWriter(new FileWriter("hosts.txt", true));
+					bw.newLine();
+					bw.append(newHost);
+					bw.close();
+				} catch (IOException e) {
+					// TODO Auto-generated catch block
+					e.printStackTrace();
+				}
+			    
+			    /*
+			     * Informo i client attivi del nuovo host aggiunto.
+			     */
+			    try {
+					clientDescriptor = DFService.search(myAgent, templateClient, all);
+				} catch (final FIPAException fe) {
+					fe.printStackTrace();
+				}
+			    
+			    if (clientDescriptor != null && clientDescriptor.length != 0) {
+			    	System.out.println("The Internet - found Client(s) to inform about the new host...");
+			    	
+			    	/*
+			    	 * Creazione di un nuovo host ed invio ai client attivi
+			    	 */
+			    	for (int i=0; i<clientDescriptor.length; i++) {
+				    	inform = new ACLMessage(ACLMessage.INFORM);
+				    	inform.addReceiver(clientDescriptor[i].getName());
+				    	inform.setOntology("NEWHOST");
+				    	inform.setContent(newHost);
+			    		System.out.println("The Internet - sending host "+ newHost + " to add to " + clientDescriptor[0].getName().getLocalName() + "..." );
+			    		this.myAgent.send(inform);
+			    	}
 		    	}
-	    	}*/
-		    
+		    }
 		}
 	}
 }
