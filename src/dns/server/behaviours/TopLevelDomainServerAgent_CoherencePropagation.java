@@ -4,7 +4,6 @@ import java.io.IOException;
 import java.util.ArrayList;
 
 import dns.server.agents.TopLevelDomainServerAgent;
-import dns.tables.PrimaryTable;
 import dns.tables.TLDTable;
 import jade.core.AID;
 import jade.core.Agent;

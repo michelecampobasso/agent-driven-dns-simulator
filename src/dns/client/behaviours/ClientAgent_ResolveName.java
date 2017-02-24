@@ -1,14 +1,9 @@
 package dns.client.behaviours;
 
-import java.io.BufferedReader;
-import java.io.FileNotFoundException;
-import java.io.FileReader;
-import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Random;
 
 import dns.client.agents.ClientAgent;
-import jade.core.AID;
 import jade.core.Agent;
 import jade.core.behaviours.TickerBehaviour;
 import jade.domain.DFService;
@@ -23,7 +18,6 @@ public class ClientAgent_ResolveName extends TickerBehaviour {
 
 	private static final long serialVersionUID = 5628523830884886480L;
 	
-	private ArrayList<String> hosts = new ArrayList<String>();
 	private String hostToResolve;
 	private ACLMessage request;
 	private DFAgentDescription template;
@@ -42,22 +36,6 @@ public class ClientAgent_ResolveName extends TickerBehaviour {
 
 	@Override
 	public void onStart() {
-		
-		// Carico gli hosts...
-		try { 
-			BufferedReader br = new BufferedReader(new FileReader("hosts.txt"));
-	        String line = null;
-	        while ((line = br.readLine()) != null) {
-	        	hosts.add(line);
-	        }
-	        br.close();
-		}
-		catch (FileNotFoundException e) {
-			e.printStackTrace();
-		}
-		catch (IOException e) {
-			e.printStackTrace();
-		}
 		
 		template = new DFAgentDescription();
 	    sd = new ServiceDescription();
@@ -87,9 +65,11 @@ public class ClientAgent_ResolveName extends TickerBehaviour {
 			}
 		
 		    /*
-		     * Se ho trovato il RootSever, allora posso richiedere la risoluzione del nome dell'host.
+		     * Se ho trovato il RootSever e sono stati caricati tutti gli host, 
+		     * allora posso richiedere la risoluzione del nome dell'host.
 		     */
-		    if (rootServerDescriptor != null && rootServerDescriptor.length != 0) {
+			ArrayList<String> hosts = ((ClientAgent)myAgent).getAllHosts();
+		    if (rootServerDescriptor != null && rootServerDescriptor.length != 0 && hosts.size()!=0) {
 		    	System.out.println("Client "+myAgent.getAID().getLocalName()+" - found RootServer "+rootServerDescriptor[0].getName().getLocalName());
 		    	hostToResolve = hosts.get(new Random().nextInt(hosts.size()));
 	    		request.addReceiver(rootServerDescriptor[0].getName());

@@ -21,6 +21,17 @@ public class RootServer_ResolveName extends Behaviour {
 	private DFAgentDescription template;
 	private ServiceDescription sd;
 	private SearchConstraints all;
+	
+	@Override
+	public void onStart() {
+		
+		template = new DFAgentDescription();
+	    sd = new ServiceDescription();
+	    sd.setType("TLDSERVER");
+	    template.addServices(sd);
+	    all = new SearchConstraints();
+	    all.setMaxResults(new Long(-1));
+	}
 
 	@Override
 	public void action() {
@@ -35,13 +46,7 @@ public class RootServer_ResolveName extends Behaviour {
 	    	/*
 	    	 * Il RootServer richiede ogni volta quali sono i TLDServer... TODO tabella?
 	    	 */
-			template = new DFAgentDescription();
-		    sd = new ServiceDescription();
-		    sd.setType("TLDSERVER");
-		    template.addServices(sd);
-		    all = new SearchConstraints();
-		    all.setMaxResults(new Long(-1));
-	    	
+			
 		    DFAgentDescription[] result = null;
 		    try {
 		        result = DFService.search(myAgent, template, all);

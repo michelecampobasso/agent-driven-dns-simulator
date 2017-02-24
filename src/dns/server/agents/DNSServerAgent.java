@@ -5,8 +5,9 @@ import java.io.FileNotFoundException;
 import java.io.FileReader;
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.Calendar;
 
-import dns.server.behaviours.DNSServerAgent_ResolveName;
+import dns.server.behaviours.*;
 import dns.tables.Host;
 import jade.core.Agent;
 import jade.domain.DFService;
@@ -83,10 +84,15 @@ public class DNSServerAgent extends Agent {
 		}
         
         this.addBehaviour(new DNSServerAgent_ResolveName());
+        this.addBehaviour(new DNSServerAgent_CreateNewHost());
     }
 
 	public ArrayList<Host> getHostTable() {
 		return hostTable;
+	}
+	
+	public boolean addHost(String hostName, Calendar timeStamp, String address) {
+		return hostTable.add(new Host(hostName, address));
 	}
 
 }

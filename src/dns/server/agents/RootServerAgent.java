@@ -34,8 +34,9 @@ public class RootServerAgent extends Agent {
             System.out.println("!!ERROR!! Registration of RootServerAgent to DF failed! System may not work properly.");
         }
         
-        this.addBehaviour(new RootServer_ClosestZone());
+        //this.addBehaviour(new RootServer_ClosestZone());
         this.addBehaviour(new RootServer_ResolveName());
+        this.addBehaviour(new RootServer_CreateNewHost());
     }
 
 }

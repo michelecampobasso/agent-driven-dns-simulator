@@ -7,9 +7,7 @@ import java.io.IOException;
 import java.util.Calendar;
 
 import dns.server.behaviours.*;
-import dns.tables.PrimaryTable;
 import dns.tables.TLDTable;
-import jade.core.AID;
 import jade.core.Agent;
 import jade.domain.DFService;
 import jade.domain.FIPAException;
@@ -74,6 +72,7 @@ public class TopLevelDomainServerAgent extends Agent{
         
         this.addBehaviour(new TopLevelDomainServerAgent_ResolveName());
         //this.addBehaviour(new TopLevelDomainServerAgent_CoherencePropagation(this, 60000));
+        this.addBehaviour(new TopLevelDomainServerAgent_CreateNewHost());
     }	
 
 	/*public int getZone() {
@@ -84,8 +83,8 @@ public class TopLevelDomainServerAgent extends Agent{
 		return TLDTable;
 	}
 	
-	public void updateTLDTableEntry(String TLD, String address, Calendar timestamp, int position) {
+	public boolean updateTLDTableEntry(String TLD, String address, Calendar timestamp, int position) {
 		TLDTable.deleteHost(TLD, address);
-		TLDTable.addHost(TLD, timestamp, address);
+		return TLDTable.addHost(TLD, timestamp, address);
 	}
 }

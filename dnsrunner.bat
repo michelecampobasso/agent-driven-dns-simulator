@@ -7,4 +7,5 @@ RootServer:dns.server.agents.RootServerAgent;^
 210.210.210.210:dns.client.agents.ClientAgent;^
 222.222.222.222:dns.server.agents.TopLevelDomainServerAgent;^
 231.231.231.231:dns.server.agents.DNSServerAgent;^
-244.244.244.244:dns.server.agents.DNSServerAgent &
+244.244.244.244:dns.server.agents.DNSServerAgent;^
+GOD:dns.theinternet.TheInternetAgent &

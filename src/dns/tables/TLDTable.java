@@ -16,9 +16,8 @@ public class TLDTable implements Serializable {
 		
 	}
 
-	public void addHost(String TLD, Calendar timeStamp, String address) {
-		TLDs.add(new TLDNameAndDate(TLD, timeStamp));
-		Addresses.add(address);
+	public boolean addHost(String TLD, Calendar timeStamp, String address) {
+		return (TLDs.add(new TLDNameAndDate(TLD, timeStamp)) &&	Addresses.add(address));
 	}
 
 	public void deleteHost(String TLD, String address) {
