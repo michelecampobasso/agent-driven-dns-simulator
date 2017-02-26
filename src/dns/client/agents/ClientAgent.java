@@ -54,7 +54,7 @@ public class ClientAgent extends Agent {
  	        br = new BufferedReader(new FileReader("added_hosts.txt"));
  	        line = null;
  	        while ((line = br.readLine()) != null)
- 	        	hosts.add(line);
+ 	        	hosts.add(line.split("\\s+")[0]);
  	        br.close();
  	        
  		}

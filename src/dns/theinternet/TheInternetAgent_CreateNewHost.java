@@ -100,7 +100,7 @@ public class TheInternetAgent_CreateNewHost extends TickerBehaviour {
 			BufferedWriter bw;
 			try {
 				bw = new BufferedWriter(new FileWriter("added_hosts.txt", true));
-				bw.append(newHost);
+				bw.append(newHost+" "+newHostAddress);
 				bw.newLine();
 				bw.close();
 			} catch (IOException e) {
