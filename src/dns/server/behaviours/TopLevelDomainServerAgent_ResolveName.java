@@ -44,12 +44,13 @@ public class TopLevelDomainServerAgent_ResolveName extends Behaviour {
 	    	/*
 	    	 * Estraggo i DNS che risolvono quel TLD in zona...
 	    	 */
-	    	ArrayList<String> DNSNames = TLDTable.getAddressesFromTLDByZone(msg.getContent().split("\\.")[1], msg.getSender().getLocalName().charAt(0));
+	    	String TLD = msg.getContent().split("\\.")[1];
+	    	ArrayList<String> DNSNames = TLDTable.getAddressesFromTLDByZone(TLD, msg.getSender().getLocalName().charAt(0));
 	    	/*
 	    	 * Se non ce ne sono, prendo tutti i DNS che risolvono quel TLD
 	    	 */
 	    	if (DNSNames.size()==0) {
-	    		DNSNames = TLDTable.getAddressesFromTLD(msg.getContent().split("\\.")[1]);
+	    		DNSNames = TLDTable.getAddressesFromTLD(TLD);
 	    		rightZone = false;
 	    	}
 	    	if (DNSNames.size()!=0) {
@@ -94,7 +95,6 @@ public class TopLevelDomainServerAgent_ResolveName extends Behaviour {
 
 	@Override
 	public boolean done() {
-		// TODO Auto-generated method stub
 		return false;
 	}
 }

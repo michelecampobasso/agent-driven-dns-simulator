@@ -41,7 +41,7 @@ public class RootServer_CreateNewHost extends Behaviour {
 			System.out.println("RootServer - the host's name is "+msg.getContent().split("\\s+")[0]+" and address is: "+msg.getContent().split("\\s+")[1]);
 			
 			/*
-	    	 * Il RootServer richiede ogni volta quali sono i TLDServer... TODO tabella?
+	    	 * Il RootServer richiede ogni volta quali sono i TLDServer.
 	    	 */
 			
 		    DFAgentDescription[] result = null;
@@ -52,12 +52,11 @@ public class RootServer_CreateNewHost extends Behaviour {
 		        	 * Invio il nuovo host ad ogni TLD...
 		        	 */
 		        	for (int i = 0; i < result.length; ++i) {
-			        	System.out.println("Root Server - TLD Server found for zone "+result[i].getName().getLocalName()+". Propagating new host...");
+			        	System.out.println("Root Server - TLD Server "+result[i].getName().getLocalName()+" found. Propagating new host...");
 				    	ACLMessage proposal = new ACLMessage(ACLMessage.INFORM);
 				    	proposal.setContent(msg.getContent());
 				    	proposal.addReceiver(result[i].getName());
 				    	proposal.setOntology("NEWHOST");
-			    		System.out.println("Root Server - sending msg to " + result[i].getName().getLocalName() + " to add new host..." );
 			    		this.myAgent.send(proposal);
 			        }
 		        }

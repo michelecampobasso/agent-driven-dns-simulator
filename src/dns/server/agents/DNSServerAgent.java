@@ -87,6 +87,7 @@ public class DNSServerAgent extends Agent {
         
         this.addBehaviour(new DNSServerAgent_ResolveName());
         this.addBehaviour(new DNSServerAgent_CreateNewHost());
+        this.addBehaviour(new DNSServerAgent_Realignment());
     }
 	
 	@Override

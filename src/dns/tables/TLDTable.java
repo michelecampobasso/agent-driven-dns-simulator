@@ -41,6 +41,14 @@ public class TLDTable implements Serializable {
 		return Addresses;
 	}
 	
+	public ArrayList<String> getAllAddressesByZone(char zone) {
+		ArrayList<String> addresses = new ArrayList<String>();
+		for (int i = 0; i < Addresses.size(); i++)
+			if (Addresses.get(i).charAt(0)==zone)
+				addresses.add(Addresses.get(i));
+		return addresses;
+	}
+	
 	public TLDNameAndDate getTLD(int i) {
 		return TLDs.get(i);
 	}

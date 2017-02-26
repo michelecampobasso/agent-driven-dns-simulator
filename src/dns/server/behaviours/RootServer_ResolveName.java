@@ -63,8 +63,8 @@ public class RootServer_ResolveName extends Behaviour {
 		        	if (result[i].getName().getLocalName().charAt(0)==(msg.getSender().getLocalName().charAt(0)))
 		            	TLDServers.add(result[i].getName());
 		        /*
-		         * Se i TLD in zona non sono disponibili, interrogo il DF 
-		         * per avere i server di un altra zona.
+		         * Se i TLD in zona non sono disponibili, prendo i 
+		         * TLD di un'altra zona.
 		         */
 		        if (TLDServers.size()==0) { 
 		        	for (int i = 0; i < result.length; ++i) 
@@ -102,7 +102,6 @@ public class RootServer_ResolveName extends Behaviour {
 
 	@Override
 	public boolean done() {
-		// TODO Auto-generated method stub
 		return false;
 	}
 
