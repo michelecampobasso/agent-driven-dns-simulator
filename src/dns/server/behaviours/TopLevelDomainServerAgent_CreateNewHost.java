@@ -70,14 +70,20 @@ public class TopLevelDomainServerAgent_CreateNewHost extends Behaviour {
 			} catch (FIPAException e) {
 				e.printStackTrace();
 			}
+			
+			/*
+			 * TODO se non posso risolvere questo TLD in zona, devo riferirlo ad un altro DNS
+			 */
 	        
+			if (result != null) {
 			// ...e gli inoltro il nuovo host.
-	    	ACLMessage proposal = new ACLMessage(ACLMessage.INFORM);
-	    	proposal.setContent(msg.getContent());
-	    	proposal.addReceiver(result[0].getName());
-	    	proposal.setOntology("NEWHOST");
-			System.out.println("TLD Server "+myAgent.getLocalName()+" - forwarding host to add to "+result[0].getName().getLocalName()+".");
-    		this.myAgent.send(proposal);
+		    	ACLMessage proposal = new ACLMessage(ACLMessage.INFORM);
+		    	proposal.setContent(msg.getContent());
+		    	proposal.addReceiver(result[0].getName());
+		    	proposal.setOntology("NEWHOST");
+				System.out.println("TLD Server "+myAgent.getLocalName()+" - forwarding host to add to "+result[0].getName().getLocalName()+".");
+				this.myAgent.send(proposal);
+			}
 		}
 
 		else

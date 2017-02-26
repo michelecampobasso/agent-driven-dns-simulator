@@ -1,5 +1,8 @@
 package dns.server.behaviours;
 
+import java.util.ArrayList;
+import java.util.Random;
+
 import dns.server.agents.TopLevelDomainServerAgent;
 import dns.tables.TLDTable;
 import jade.core.AID;
@@ -37,45 +40,52 @@ public class TopLevelDomainServerAgent_ResolveName extends Behaviour {
 	    	 * Ottengo la tabella contenente i riferimenti ai DNS in base al TLD
 	    	 */
 	    	TLDTable TLDTable = ((TopLevelDomainServerAgent)myAgent).getTLDTable();
+	    	boolean rightZone = true;
 	    	/*
-	    	 * Estraggo il DNS che risolve quel TLD...
+	    	 * Estraggo i DNS che risolvono quel TLD in zona...
 	    	 */
-	    	String DNSName = TLDTable.getAddressFromTLD(msg.getContent().split("\\.")[1]);
-	    	if (DNSName.equals(""))
-	    		System.out.println("VOID DNS RECEIVED! - TopLevelDomainServerAgent_ResolveName");
-			template = new DFAgentDescription();
-		    sd = new ServiceDescription();
-		    sd.setName(DNSName);
-		    template.addServices(sd);
-		    all = new SearchConstraints();
-		    all.setMaxResults(new Long(-1));
-	    	
-		    DFAgentDescription[] result = null;
-		    try {
-		        result = DFService.search(myAgent, template, all);
-		        AID DNSServer = new AID();
-		        for (int i = 0; i < result.length; ++i) {
-		        	/*
-		        	 * ...e ne recupero il riferimento, controllando la correttezza della zona.
-		        	 */
-		        	if (result[i].getName().getLocalName().charAt(0)==(msg.getSender().getLocalName().charAt(0)))
-		            	DNSServer = result[i].getName();
-		        }
-
-		        System.out.println("TLD Server "+myAgent.getAID().getLocalName()+" - DNS Server found for zone "+msg.getSender().getLocalName().charAt(0)+". Forwarding request...");
-	        	request = new ACLMessage(ACLMessage.REQUEST);
-		    	/*
-		    	 * Inoltro la richiesta al DNS trovato specificando come AID a cui rispondere quello del client
-		    	 */
-		    	request.setContent(msg.getContent());
-	        	request.addReceiver(DNSServer);
-	        	request.setSender(msg.getSender());
-	    		request.setOntology("RESOLVE");
-	    		System.out.println("TLD Server "+myAgent.getAID().getLocalName()+" - sending request to " + DNSServer.getLocalName() + " to resolve host..." );
-	    		this.myAgent.send(request);
-		    } catch (final FIPAException fe) {
-		        fe.printStackTrace();
-		    }
+	    	ArrayList<String> DNSNames = TLDTable.getAddressesFromTLDByZone(msg.getContent().split("\\.")[1], msg.getSender().getLocalName().charAt(0));
+	    	/*
+	    	 * Se non ce ne sono, prendo tutti i DNS che risolvono quel TLD
+	    	 */
+	    	if (DNSNames.size()==0) {
+	    		DNSNames = TLDTable.getAddressesFromTLD(msg.getContent().split("\\.")[1]);
+	    		rightZone = false;
+	    	}
+	    	if (DNSNames.size()!=0) {
+	    		Random rnd = new Random();
+				template = new DFAgentDescription();
+			    sd = new ServiceDescription();
+			    // Ne scelgo uno...
+			    sd.setName(DNSNames.get(rnd.nextInt(DNSNames.size())));
+			    template.addServices(sd);
+			    all = new SearchConstraints();
+			    all.setMaxResults(new Long(-1));
+		    	
+			    DFAgentDescription[] result = null;
+			    try {
+			    	// ...e ne recupero il riferimento
+			        result = DFService.search(myAgent, template, all);
+			        AID DNSServer = result[0].getName();
+		        	if (rightZone)
+		        		System.out.println("TLD Server "+myAgent.getAID().getLocalName()+" - DNS Server found for zone "+msg.getSender().getLocalName().charAt(0)+". Forwarding request...");
+		        	else
+		        		System.out.println("TLD Server "+myAgent.getAID().getLocalName()+" - DNS Server for zone "+msg.getSender().getLocalName().charAt(0)+" currently down. Forwarding request to "+DNSServer.getLocalName()+"...");
+		        	request = new ACLMessage(ACLMessage.REQUEST);
+			    	/*
+			    	 * Inoltro la richiesta al DNS trovato specificando come AID a cui rispondere quello del client
+			    	 */
+			    	request.setContent(msg.getContent());
+		        	request.addReceiver(DNSServer);
+		        	request.setSender(msg.getSender());
+		    		request.setOntology("RESOLVE");
+		    		System.out.println("TLD Server "+myAgent.getAID().getLocalName()+" - sending request to " + DNSServer.getLocalName() + " to resolve host..." );
+		    		this.myAgent.send(request);
+			    } catch (final FIPAException fe) {
+			        fe.printStackTrace();
+			    }
+	    	} else
+	    		System.out.println("TLD Server - no DNS Servers available. System is not working, create a new DNS ASAP.");
     	}
     	else 
     		block();
@@ -87,5 +97,4 @@ public class TopLevelDomainServerAgent_ResolveName extends Behaviour {
 		// TODO Auto-generated method stub
 		return false;
 	}
-
 }

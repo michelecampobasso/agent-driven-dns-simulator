@@ -55,11 +55,9 @@ public class TopLevelDomainServerAgent extends Agent{
 	        String line = null;
 	        while ((line = br.readLine()) != null) {
 	        	/*
-	        	 * Prendo quelli che hanno lo stesso prefisso
+	        	 * Aggiungo tutti gli hosts, anche quelli delle altre zone
 	        	 */
-	        	if (line.split("\\s+")[1].charAt(0)==getAID().getLocalName().charAt(0)) {
-	        		TLDTable.addHost(line.split("\\s+")[0], Calendar.getInstance(), line.split("\\s+")[1]);
-	        	}
+	        	TLDTable.addHost(line.split("\\s+")[0], Calendar.getInstance(), line.split("\\s+")[1]);
 	        }
 	        br.close();
 		}
@@ -73,18 +71,29 @@ public class TopLevelDomainServerAgent extends Agent{
         this.addBehaviour(new TopLevelDomainServerAgent_ResolveName());
         //this.addBehaviour(new TopLevelDomainServerAgent_CoherencePropagation(this, 60000));
         this.addBehaviour(new TopLevelDomainServerAgent_CreateNewHost());
+        this.addBehaviour(new TopLevelDomainServerAgent_DeletedDNS());
     }	
 
 	/*public int getZone() {
 		return zone;
 	}*/
 	
+	@Override
+	public void takeDown() {
+		try {
+			DFService.deregister(this);
+		} catch (FIPAException e) {
+			System.out.println("Problems while deregistering the TLDServer "+getAID().getLocalName()+". System may not work properly.");
+			e.printStackTrace();
+		}
+	}
+	
 	public TLDTable getTLDTable() {
 		return TLDTable;
 	}
 	
 	public boolean updateTLDTableEntry(String TLD, String address, Calendar timestamp, int position) {
-		TLDTable.deleteHost(TLD, address);
+		TLDTable.deleteHostByTLD(TLD, address);
 		return TLDTable.addHost(TLD, timestamp, address);
 	}
 }

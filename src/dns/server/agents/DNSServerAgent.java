@@ -13,7 +13,9 @@ import jade.core.Agent;
 import jade.domain.DFService;
 import jade.domain.FIPAException;
 import jade.domain.FIPAAgentManagement.DFAgentDescription;
+import jade.domain.FIPAAgentManagement.SearchConstraints;
 import jade.domain.FIPAAgentManagement.ServiceDescription;
+import jade.lang.acl.ACLMessage;
 
 public class DNSServerAgent extends Agent {
 
@@ -86,6 +88,35 @@ public class DNSServerAgent extends Agent {
         this.addBehaviour(new DNSServerAgent_ResolveName());
         this.addBehaviour(new DNSServerAgent_CreateNewHost());
     }
+	
+	@Override
+	public void takeDown() {
+		
+		DFAgentDescription template = new DFAgentDescription();
+		ServiceDescription sd = new ServiceDescription();
+		SearchConstraints all;
+		
+		sd.setType("TLDSERVER");
+	    template.addServices(sd);
+	    all = new SearchConstraints();
+	    all.setMaxResults(new Long(-1));
+	    
+	    DFAgentDescription[] result = null;
+	    try {
+	        result = DFService.search(this, template, all);
+	        for (int i = 0; i < result.length; ++i) { 
+	        	ACLMessage deregister = new ACLMessage(ACLMessage.CANCEL);
+	        	deregister.setOntology("TAKEDOWN");
+				deregister.addReceiver(result[i].getName());
+				send(deregister);
+				System.out.println("DNS Server "+getAID().getLocalName()+" - noticed TLD Server " + result[i].getName().getLocalName() + " the deregistration.");
+	        }
+			DFService.deregister(this);
+		} catch (FIPAException e) {
+			System.out.println("Problems while deregistering the DNS Server "+getAID().getLocalName()+". System may not work properly.");
+			e.printStackTrace();
+		}
+	}	
 
 	public ArrayList<Host> getHostTable() {
 		return hostTable;

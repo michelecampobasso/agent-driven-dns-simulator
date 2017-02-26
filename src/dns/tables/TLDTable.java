@@ -20,11 +20,20 @@ public class TLDTable implements Serializable {
 		return (TLDs.add(new TLDNameAndDate(TLD, timeStamp)) &&	Addresses.add(address));
 	}
 
-	public void deleteHost(String TLD, String address) {
+	public void deleteHostByTLD(String TLD, String address) {
 		for (int i = 0; i < TLDs.size(); i++)
 			if (TLDs.get(i).TLD.equals(TLD) && Addresses.get(i).equals(address)) {
 				TLDs.remove(i);
 				Addresses.remove(i);
+			}
+	}
+	
+	public void deleteHost(String address) {
+		for (int i=0; i<Addresses.size(); i++)
+			if (Addresses.get(i).equals(address)) {
+				Addresses.remove(i);
+				TLDs.remove(i);
+				i--;
 			}
 	}
 
@@ -53,6 +62,16 @@ public class TLDTable implements Serializable {
 		return retval;
 	}
 	
+	public ArrayList<String> getAddressesFromTLDByZone(String TLD, char zone) {
+		ArrayList<String> retval = new ArrayList<String>();
+
+		for (int i = 0; i < TLDs.size(); i++)
+			if (TLDs.get(i).TLD.equals(TLD) && Addresses.get(i).charAt(0)==zone)
+				retval.add(Addresses.get(i));
+		return retval;
+
+	}
+	
 	public String getAddressFromTLD(String TLD) {
 		for (int i=0;i<TLDs.size(); i++)
 			if (TLDs.get(i).TLD.equalsIgnoreCase(TLD))
@@ -75,4 +94,6 @@ public class TLDTable implements Serializable {
 			timeStamp = ts;
 		}
 	}
+
+	
 }

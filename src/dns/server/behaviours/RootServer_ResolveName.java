@@ -1,5 +1,8 @@
 package dns.server.behaviours;
 
+import java.util.ArrayList;
+import java.util.Random;
+
 import jade.core.AID;
 import jade.core.behaviours.Behaviour;
 import jade.domain.DFService;
@@ -44,25 +47,41 @@ public class RootServer_ResolveName extends Behaviour {
 	    	System.out.println("Root Server - received request to resolve "+msg.getContent()+"'s address.");
 	   		
 	    	/*
-	    	 * Il RootServer richiede ogni volta quali sono i TLDServer... TODO tabella?
+	    	 * Il RootServer richiede ogni volta quali sono i TLDServer al DF: in questo modo
+	    	 * ho una conoscenza corretta di quali sono i subordinati attivi.
 	    	 */
 			
 		    DFAgentDescription[] result = null;
 		    try {
 		        result = DFService.search(myAgent, template, all);
-		        AID TLDServer = new AID();
+		        ArrayList<AID> TLDServers = new ArrayList<AID>();
+		        boolean rightZone = true;
 		        /*
-		         * Il TLDServer è uno per zona, lo recupero.
+		         * Recupero i TLD Server di zona.
 		         */
-		        for (int i = 0; i < result.length; ++i) {
+		        for (int i = 0; i < result.length; ++i) 
 		        	if (result[i].getName().getLocalName().charAt(0)==(msg.getSender().getLocalName().charAt(0)))
-		            	TLDServer = result[i].getName();
+		            	TLDServers.add(result[i].getName());
+		        /*
+		         * Se i TLD in zona non sono disponibili, interrogo il DF 
+		         * per avere i server di un altra zona.
+		         */
+		        if (TLDServers.size()==0) { 
+		        	for (int i = 0; i < result.length; ++i) 
+			        	if (result[i].getName().getLocalName().charAt(0)!=(msg.getSender().getLocalName().charAt(0)))
+			            	TLDServers.add(result[i].getName());
+		        	rightZone = false;
 		        }
-		        if (result.length!=0) {
+		        if (TLDServers.size()!=0) {
 		        	/*
-		        	 * Trovato il TLDServer di pertinenza, inoltro la richiesta di risoluzione host.
+		        	 * Trovato almeno un TLDServer da interrogare, inoltro la richiesta di risoluzione host.
 		        	 */
-		        	System.out.println("Root Server - TLD Server found for zone "+msg.getSender().getLocalName().charAt(0)+". Forwarding request...");
+		        	Random rnd = new Random();
+		        	AID TLDServer = TLDServers.get(rnd.nextInt(TLDServers.size()));
+		        	if (rightZone)
+		        		System.out.println("Root Server - TLD Server found for zone "+msg.getSender().getLocalName().charAt(0)+". Forwarding request...");
+		        	else
+		        		System.out.println("Root Server - TLD Server for zone "+msg.getSender().getLocalName().charAt(0)+" currently down. Forwarding request to "+TLDServer.getLocalName()+"...");
 			    	request = new ACLMessage(ACLMessage.REQUEST);
 			    	request.setContent(msg.getContent());
 			    	request.setSender(msg.getSender());
@@ -70,6 +89,8 @@ public class RootServer_ResolveName extends Behaviour {
 		    		request.setOntology("RESOLVE");
 		    		System.out.println("Root Server - sending request to " + TLDServer.getLocalName() + " to resolve the host..." );
 		    		this.myAgent.send(request);
+		        } else {
+		        	System.out.println("Root Server - no TLD Servers available. System is not working, create a new TLD ASAP.");
 		        }
 		    } catch (final FIPAException fe) {
 		        fe.printStackTrace();

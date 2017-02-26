@@ -38,5 +38,15 @@ public class RootServerAgent extends Agent {
         this.addBehaviour(new RootServer_ResolveName());
         this.addBehaviour(new RootServer_CreateNewHost());
     }
+    
+    @Override
+	public void takeDown() {
+		try {
+			DFService.deregister(this);
+		} catch (FIPAException e) {
+			System.out.println("Problems while deregistering the RootServer "+getAID().getLocalName()+". System may not work properly.");
+			e.printStackTrace();
+		}
+	}
 
 }

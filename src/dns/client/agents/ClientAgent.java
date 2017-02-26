@@ -70,6 +70,17 @@ public class ClientAgent extends Agent {
         //this.addBehaviour(new ClientAgent_GetTLDs(this, 10000));
     }
     
+    @Override
+	public void takeDown() {
+		try {
+			DFService.deregister(this);
+		} catch (FIPAException e) {
+			System.out.println("Problems while deregistering the Client "+getAID().getLocalName()+". System may not work properly.");
+			e.printStackTrace();
+		}
+	}
+    
+    
     public void setTLDs(TLDLatencyTable t) {
     	closestTLDs = t;
     }
