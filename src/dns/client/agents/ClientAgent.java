@@ -47,10 +47,16 @@ public class ClientAgent extends Agent {
  		try { 
  			BufferedReader br = new BufferedReader(new FileReader("hosts.txt"));
  	        String line = null;
- 	        while ((line = br.readLine()) != null) {
+ 	        while ((line = br.readLine()) != null)
  	        	hosts.add(line);
- 	        }
  	        br.close();
+ 	        // anche quelli aggiunti se questo agente sta venendo avviato in un secondo momento
+ 	        br = new BufferedReader(new FileReader("added_hosts.txt"));
+ 	        line = null;
+ 	        while ((line = br.readLine()) != null)
+ 	        	hosts.add(line);
+ 	        br.close();
+ 	        
  		}
  		catch (FileNotFoundException e) {
  			e.printStackTrace();

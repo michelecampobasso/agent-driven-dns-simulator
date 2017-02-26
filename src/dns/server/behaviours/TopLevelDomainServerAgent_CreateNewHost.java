@@ -44,13 +44,14 @@ public class TopLevelDomainServerAgent_CreateNewHost extends Behaviour {
 			
 			TLDTable table = ((TopLevelDomainServerAgent)myAgent).getTLDTable();
 			
-			String DNSAddress = table.getAddressFromTLD(msg.getContent().split("\\s+")[0].split("\\.")[1]);
-			// Nuovo TLD, devo deputare un nuovo DNS a risolvere questi TLD ed aggiungere il riferimento alla tabella.
+			String TLD = msg.getContent().split("\\s+")[0].split("\\.")[1];
+			String DNSAddress = table.getAddressFromTLD(TLD);
+			
 			if (DNSAddress == null || DNSAddress == "") {
 				ArrayList<String> DNSServerAddresses = table.getAllAddresses();
 				Random rnd = new Random();
 				DNSAddress = DNSServerAddresses.get(rnd.nextInt(DNSServerAddresses.size()));
-				if (!table.addHost(msg.getContent().split("\\s+")[0].split("\\.")[1], Calendar.getInstance(), DNSAddress))
+				if (!table.addHost(TLD, Calendar.getInstance(), DNSAddress))
 					System.out.println("TLDServer "+myAgent.getLocalName()+" - error while adding the host!");
 				System.out.println("TLDServer - new TLD, adding it and picking "+DNSAddress+" as responsable.");
 			}
