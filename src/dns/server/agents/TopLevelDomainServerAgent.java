@@ -4,6 +4,7 @@ import java.io.BufferedReader;
 import java.io.FileNotFoundException;
 import java.io.FileReader;
 import java.io.IOException;
+import java.util.ArrayList;
 import java.util.Calendar;
 
 import dns.server.behaviours.*;
@@ -12,20 +13,154 @@ import jade.core.Agent;
 import jade.domain.DFService;
 import jade.domain.FIPAException;
 import jade.domain.FIPAAgentManagement.DFAgentDescription;
+import jade.domain.FIPAAgentManagement.SearchConstraints;
 import jade.domain.FIPAAgentManagement.ServiceDescription;
+import jade.lang.acl.ACLMessage;
+import jade.lang.acl.MessageTemplate;
+import jade.lang.acl.UnreadableException;
 
 public class TopLevelDomainServerAgent extends Agent{
 
 	private static final long serialVersionUID = 1814120770306117557L;
 	//private int zone;
 	
-	// Questa tabella contiene i riferimenti ai tld ed i rispettivi dns che li risolvono
-	private TLDTable TLDTable = new TLDTable();
+	private MessageTemplate mtTLD = MessageTemplate.and(MessageTemplate.MatchPerformative(ACLMessage.INFORM), 
+			MessageTemplate.MatchOntology("YOURTABLEPLEASE"));
+	private MessageTemplate mtDNS = MessageTemplate.and(MessageTemplate.MatchPerformative(ACLMessage.INFORM), 
+			MessageTemplate.MatchOntology("YOURTLDPLEASE"));
 	
+	// Questa tabella contiene i riferimenti ai tld ed i rispettivi dns che li risolvono
+	private TLDTable TLDTable = null;
+	
+	private DFAgentDescription template;
+	private ServiceDescription sd;
+	private SearchConstraints all;
+	
+	@SuppressWarnings("unchecked")
 	@Override
     protected void setup() {
 		
         System.out.println("TopLevelDomainServer "+getAID().getLocalName()+" started.");
+        
+		if (getArguments()[0].toString().equalsIgnoreCase("post")) {
+			/*
+			 * Post inizializzazione: il TLD appena creato è stato aggiunto successivamente.
+			 * Non deve avvenire la lettura da files in quanto la configurazione del sistema
+			 * potrebbe essere cambiata nel mentre.
+			 * 
+			 * Due casi: 
+			 * 		1) Esiste già un TLD in zona, quindi questa è pura replicazione;
+			 * 		2) Non esiste un TLD in zona, vanno risolti tutti i subordinati e mappate
+			 * 			le loro competenze per TLD.
+			 * 
+			 */
+			template = new DFAgentDescription();
+		    sd = new ServiceDescription();
+		    sd.setType("TLDSERVER");
+		    template.addServices(sd);
+		    all = new SearchConstraints();
+		    all.setMaxResults(new Long(-1));
+		    
+		    /*
+		     * Comincio col controllare se esiste un pari in zona e, in tal caso,
+		     * clono la sua tabella.
+		     */
+		    DFAgentDescription[] result = null;
+		    try {
+		        result = DFService.search(this, template, all);
+		        if (result.length!=0) {
+		        	for (int i = 0; i<result.length; i++) {
+		        		// Recupero un TLD della stessa zona
+		        		if (result[i].getName().getLocalName().charAt(0)==getAID().getLocalName().charAt(0)) {
+		        			ACLMessage request = new ACLMessage(ACLMessage.REQUEST);
+		        			request.setOntology("YOURTABLEPLEASE");
+		        			request.addReceiver(result[i].getName());
+		        			send(request);
+		        			/*
+		        			 * Posso permettermi di utilizzare una blockingReceive dal momento che ho chiesto al
+		        			 * DF quali sono gli host e sicuramente sono vivi. Tuttavia, ci metto un timeout massimo.
+		        			 */
+		        			ACLMessage response = blockingReceive(mtTLD, 5000);
+		        			if (response != null) {
+		        				TLDTable = (TLDTable)response.getContentObject();
+		        				break;
+		        			}
+		        		}
+		        	}
+		        }
+		    } catch (final FIPAException fe) {
+		        fe.printStackTrace();
+		    } catch (UnreadableException ue) {
+		    	ue.printStackTrace();
+		    }
+		    /*
+	         * Se invece non ho trovato un TLD della stessa zona, allora devo interrogare i subordinati
+	         * per sapere cosa risolvono e costruire la mia tabella.
+	         */
+		    if (TLDTable == null) {
+		    	
+		    	TLDTable = new TLDTable();
+		    	
+			    template = new DFAgentDescription();
+			    sd = new ServiceDescription();
+			    sd.setType("DNSSERVER");
+			    template.addServices(sd);
+			    all = new SearchConstraints();
+			    all.setMaxResults(new Long(-1));
+			    
+			    result = null;
+			    try {
+			        result = DFService.search(this, template, all);
+			        if (result.length!=0) {
+			        	for (int i = 0; i<result.length; i++) {
+			        		// Recupero TUTTI i DNS della zona
+			        		if (result[i].getName().getLocalName().charAt(0)==getAID().getLocalName().charAt(0)) {
+			        			ACLMessage request = new ACLMessage(ACLMessage.REQUEST);
+			        			request.setOntology("YOURTLDPLEASE");
+			        			request.addReceiver(result[i].getName());
+			        			send(request);
+			        			
+			        			ACLMessage response = blockingReceive(mtDNS, 5000);
+			        			if (response != null) {
+			        				ArrayList<String> resolvedTLDs = (ArrayList<String>)response.getContentObject();
+			        				for (int j = 0; j<resolvedTLDs.size(); j++) 
+			        					TLDTable.addHost(resolvedTLDs.get(j), Calendar.getInstance(), result[i].getName().getLocalName());
+			        			}
+			        		}
+			        	}
+			        }
+			    } catch (final FIPAException fe) {
+			        fe.printStackTrace();
+			    } catch (UnreadableException ue) {
+			    	ue.printStackTrace();
+			    }
+		    }
+        }
+        else {
+	        /*
+	         * Inizializzazione: inizializzo la tabella prendendo solo i DNSServer della stessa zona
+	         * del TopLevelDomainServer in questione (stesso prefisso)
+	         */
+        	TLDTable = new TLDTable();
+	        
+	        try { 
+				BufferedReader br = new BufferedReader(new FileReader("tldhosts.txt"));
+		        String line = null;
+		        while ((line = br.readLine()) != null) {
+		        	/*
+		        	 * Aggiungo tutti gli hosts, anche quelli delle altre zone
+		        	 */
+		        	TLDTable.addHost(line.split("\\s+")[0], Calendar.getInstance(), line.split("\\s+")[1]);
+		        }
+		        br.close();
+			}
+			catch (FileNotFoundException e) {
+				e.printStackTrace();
+			}
+			catch (IOException e) {
+				e.printStackTrace();
+			}
+        }
         
         /*
          * Registrazione al DF...
@@ -45,33 +180,11 @@ public class TopLevelDomainServerAgent extends Agent{
             System.out.println("!!ERROR!! Registration of TopLevelDomainServer to DF failed! System may not work properly.");
         }
         
-        /*
-         * Inizializzo la tabella prendendo solo i DNSServer della stessa zona
-         * del TopLevelDomainServer in questione (stesso prefisso)
-         */
-        
-        try { 
-			BufferedReader br = new BufferedReader(new FileReader("tldhosts.txt"));
-	        String line = null;
-	        while ((line = br.readLine()) != null) {
-	        	/*
-	        	 * Aggiungo tutti gli hosts, anche quelli delle altre zone
-	        	 */
-	        	TLDTable.addHost(line.split("\\s+")[0], Calendar.getInstance(), line.split("\\s+")[1]);
-	        }
-	        br.close();
-		}
-		catch (FileNotFoundException e) {
-			e.printStackTrace();
-		}
-		catch (IOException e) {
-			e.printStackTrace();
-		}
-        
         this.addBehaviour(new TopLevelDomainServerAgent_ResolveName());
         //this.addBehaviour(new TopLevelDomainServerAgent_CoherencePropagation(this, 60000));
         this.addBehaviour(new TopLevelDomainServerAgent_CreateNewHost());
         this.addBehaviour(new TopLevelDomainServerAgent_DeletedDNS());
+        this.addBehaviour(new TopLevelDomainServerAgent_YourTablePlease());
     }	
 
 	/*public int getZone() {

@@ -60,7 +60,7 @@ public class TopLevelDomainServerAgent_CreateNewHost extends Behaviour {
 				for (int i=0; i<DNSQuantity; i++) {
 					if (!table.addHost(TLD, Calendar.getInstance(), DNSServerAddresses.get(i)))
 						System.out.println("TLD Server "+myAgent.getLocalName()+" - error while adding the host!");
-					System.out.println("TLD Server - new TLD, adding it and picking "+DNSServerAddresses.get(i)+" as responsable.");
+					System.out.println("TLD Server "+myAgent.getLocalName()+" - new TLD, adding it and picking "+DNSServerAddresses.get(i)+" as responsable.");
 				}
 			}
 			/*

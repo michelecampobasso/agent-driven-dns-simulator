@@ -28,24 +28,6 @@ public class DNSServerAgent extends Agent {
 		
 		System.out.println("DNSServer "+getAID().getLocalName()+" started.");
         
-		/*
-		 * Registrazione al DF...
-		 */
-        DFAgentDescription dfd = new DFAgentDescription();
-        dfd.setName(getAID());
-        ServiceDescription sd  = new ServiceDescription();
-        sd.setType("DNSSERVER");
-        sd.setName(getLocalName());
-        dfd.addServices(sd);
-        try {  
-            DFService.register(this, dfd);
-            System.out.println("DNSServer "+getAID().getLocalName()+" registered for zone "+getAID().getLocalName().charAt(0)+".");
-        }
-        catch (FIPAException fe) {
-            fe.printStackTrace();
-            System.out.println("!!ERROR!! Registration of DNSServer to DF failed! System may not work properly.");
-        }
-        
         /*
          * Inizializzazione della tabella contenente gli host che potrà risolvere a seconda
          * del suo indirizzo e della sua zona (i DNSServerAgent hanno una parte degli host risolvibili
@@ -85,9 +67,28 @@ public class DNSServerAgent extends Agent {
 			e.printStackTrace();
 		}
         
+        /*
+		 * Registrazione al DF...
+		 */
+        DFAgentDescription dfd = new DFAgentDescription();
+        dfd.setName(getAID());
+        ServiceDescription sd  = new ServiceDescription();
+        sd.setType("DNSSERVER");
+        sd.setName(getLocalName());
+        dfd.addServices(sd);
+        try {  
+            DFService.register(this, dfd);
+            System.out.println("DNSServer "+getAID().getLocalName()+" registered for zone "+getAID().getLocalName().charAt(0)+".");
+        }
+        catch (FIPAException fe) {
+            fe.printStackTrace();
+            System.out.println("!!ERROR!! Registration of DNSServer to DF failed! System may not work properly.");
+        }
+        
         this.addBehaviour(new DNSServerAgent_ResolveName());
         this.addBehaviour(new DNSServerAgent_CreateNewHost());
         this.addBehaviour(new DNSServerAgent_Realignment());
+        this.addBehaviour(new DNSServerAgent_YourTLDPlease());
     }
 	
 	@Override
