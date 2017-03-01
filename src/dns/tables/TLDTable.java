@@ -92,6 +92,12 @@ public class TLDTable implements Serializable {
 		return Addresses.size();
 	}
 	
+	public void toPrint() {
+		for (int i = 0; i<Addresses.size(); i++) {
+			System.out.println("Address: "+Addresses.get(i)+ " TLD: "+TLDs.get(i).TLD);
+		}
+	}
+	
 	public class TLDNameAndDate implements Serializable {
 		
 		private static final long serialVersionUID = 2793203510412665612L;
@@ -103,6 +109,4 @@ public class TLDTable implements Serializable {
 			timeStamp = ts;
 		}
 	}
-
-	
 }

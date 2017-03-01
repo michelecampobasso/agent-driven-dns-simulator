@@ -25,25 +25,7 @@ public class ClientAgent extends Agent {
     	
         System.out.println("Client started.");
         
-        /*
-		 * Registrazione al DF...
-		 */
-        DFAgentDescription dfd = new DFAgentDescription();
-        dfd.setName(getAID());
-        ServiceDescription sd  = new ServiceDescription();
-        sd.setType("CLIENT");
-        sd.setName(getLocalName());
-        dfd.addServices(sd);
-        try {  
-            DFService.register(this, dfd);
-            System.out.println("Client "+getAID().getLocalName()+" registered for zone "+getAID().getLocalName().charAt(0)+".");
-        }
-        catch (FIPAException fe) {
-            fe.printStackTrace();
-            System.out.println("!!ERROR!! Registration of Client to DF failed! System may not work properly.");
-        }
-        
-     // Carico gli hosts...
+        // Carico gli hosts...
  		try { 
  			BufferedReader br = new BufferedReader(new FileReader("hosts.txt"));
  	        String line = null;
@@ -64,6 +46,24 @@ public class ClientAgent extends Agent {
  		catch (IOException e) {
  			e.printStackTrace();
  		}
+ 		
+ 		/*
+		 * Registrazione al DF...
+		 */
+        DFAgentDescription dfd = new DFAgentDescription();
+        dfd.setName(getAID());
+        ServiceDescription sd  = new ServiceDescription();
+        sd.setType("CLIENT");
+        sd.setName(getLocalName());
+        dfd.addServices(sd);
+        try {  
+            DFService.register(this, dfd);
+            System.out.println("Client "+getAID().getLocalName()+" registered for zone "+getAID().getLocalName().charAt(0)+".");
+        }
+        catch (FIPAException fe) {
+            fe.printStackTrace();
+            System.out.println("!!ERROR!! Registration of Client to DF failed! System may not work properly.");
+        }
         
         this.addBehaviour(new ClientAgent_ResolveName(this, 5000)); //This can run only when the other behaviour has completed TODO implement delays
         this.addBehaviour(new ClientAgent_GetNewHost());

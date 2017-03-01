@@ -181,10 +181,11 @@ public class TopLevelDomainServerAgent extends Agent{
         }
         
         this.addBehaviour(new TopLevelDomainServerAgent_ResolveName());
-        //this.addBehaviour(new TopLevelDomainServerAgent_CoherencePropagation(this, 60000));
         this.addBehaviour(new TopLevelDomainServerAgent_CreateNewHost());
         this.addBehaviour(new TopLevelDomainServerAgent_DeletedDNS());
         this.addBehaviour(new TopLevelDomainServerAgent_YourTablePlease());
+        this.addBehaviour(new TopLevelDomainServerAgent_NewTLD());
+        this.addBehaviour(new TopLevelDomainServerAgent_NewDNS());
     }	
 
 	/*public int getZone() {
@@ -208,5 +209,21 @@ public class TopLevelDomainServerAgent extends Agent{
 	public boolean updateTLDTableEntry(String TLD, String address, Calendar timestamp, int position) {
 		TLDTable.deleteHostByTLD(TLD, address);
 		return TLDTable.addHost(TLD, timestamp, address);
+	}
+	
+	public boolean updateTLDTable(ArrayList<String> hosts, String TLD) {
+		ArrayList<String> alreadyPresentDNS = TLDTable.getAddressesFromTLD(TLD);
+		boolean added = false;
+		for (int i=0; i<hosts.size(); i++)
+			if (!alreadyPresentDNS.contains(hosts.get(i))) {
+				TLDTable.addHost(TLD, Calendar.getInstance(), hosts.get(i));
+				added = true;
+			}
+		return added;
+	}
+	
+	public void addTLDsForHost(ArrayList<String> TLDs, String host) {
+		for (int i = 0; i<TLDs.size(); i++)
+			TLDTable.addHost(TLDs.get(i), Calendar.getInstance(), host);
 	}
 }

@@ -91,6 +91,11 @@ public class RootServer_ResolveName extends Behaviour {
 		    		this.myAgent.send(request);
 		        } else {
 		        	System.out.println("Root Server - no TLD Servers available. System is not working, create a new TLD ASAP.");
+		        	ACLMessage unlock = new ACLMessage(ACLMessage.INFORM);
+		    		unlock.setContent("");
+		    		unlock.addReceiver(msg.getSender());
+		    		unlock.setOntology("RESOLVE");
+		    		myAgent.send(unlock);
 		        }
 		    } catch (final FIPAException fe) {
 		        fe.printStackTrace();

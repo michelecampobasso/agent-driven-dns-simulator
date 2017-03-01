@@ -15,6 +15,9 @@ public class RootServer_CreateNewHost extends Behaviour {
 	
 	private MessageTemplate mt = MessageTemplate.and(MessageTemplate.MatchPerformative(ACLMessage.INFORM), 
 			MessageTemplate.MatchOntology("NEWHOST"));
+	
+	private MessageTemplate mtResp = MessageTemplate.and(MessageTemplate.MatchPerformative(ACLMessage.CONFIRM), 
+			MessageTemplate.MatchOntology("NEWHOST"));
 
 	private ACLMessage msg;
 	private DFAgentDescription template;
@@ -50,6 +53,13 @@ public class RootServer_CreateNewHost extends Behaviour {
 		        if (result.length!=0) {
 		        	/*
 		        	 * Invio il nuovo host ad ogni TLD...
+		        	 * 
+		        	 * ATTENZIONE: sequenzializzo questa operazione.
+		        	 * Questo dal momento che, nel caso si aggiunga un host con un nuovo TLD nel sistema, 
+		        	 * devo dare ai TLD il tempo di propagare le informazioni ai DNS. Se così non fosse, rischierei
+		        	 * di avere informazioni replicate all'interno dei DNS e probabilmente tutti verrebbero scelti casualmente
+		        	 * come i designati a risolvere quel dato TLD. Per fare questo, uso una blockingReceive
+		        	 * temporizzata per assicurarmi che sia avvenuto tutto correttamente. 
 		        	 */
 		        	for (int i = 0; i < result.length; ++i) {
 			        	System.out.println("Root Server - TLD Server "+result[i].getName().getLocalName()+" found. Propagating new host...");
@@ -57,7 +67,13 @@ public class RootServer_CreateNewHost extends Behaviour {
 				    	proposal.setContent(msg.getContent());
 				    	proposal.addReceiver(result[i].getName());
 				    	proposal.setOntology("NEWHOST");
-			    		this.myAgent.send(proposal);
+			    		myAgent.send(proposal);
+			    		
+			    		/*
+			    		 *  Non ho bisogno di leggere il messaggio in quanto la sua semantica
+			    		 *  è racchiusa già nella sua forma.
+			    		 */
+			    		myAgent.blockingReceive(mtResp, 4000);
 			        }
 		        }
 		    } catch (final FIPAException fe) {

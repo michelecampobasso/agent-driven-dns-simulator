@@ -85,8 +85,17 @@ public class TopLevelDomainServerAgent_ResolveName extends Behaviour {
 			    } catch (final FIPAException fe) {
 			        fe.printStackTrace();
 			    }
-	    	} else
+	    	} else {
 	    		System.out.println("TLD Server - no DNS Servers available. System is not working, create a new DNS ASAP.");
+	    		/*
+	    		 * Unlocking Client...
+	    		 */
+	    		ACLMessage unlock = new ACLMessage(ACLMessage.INFORM);
+	    		unlock.setContent("");
+	    		unlock.addReceiver(msg.getSender());
+	    		unlock.setOntology("RESOLVE");
+	    		myAgent.send(unlock);
+	    	}
     	}
     	else 
     		block();

@@ -1,6 +1,10 @@
 package dns.tables;
 
-public class Host {
+import java.io.Serializable;
+
+public class Host implements Serializable {
+
+	private static final long serialVersionUID = 7733275415164562330L;
 
 	private String hostName;
 	private String hostAddress;
