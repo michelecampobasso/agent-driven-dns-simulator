@@ -2,27 +2,26 @@ package dns.tables;
 
 import java.io.Serializable;
 import java.util.ArrayList;
-import java.util.Calendar;
 
 public class TLDTable implements Serializable {
 
 	private static final long serialVersionUID = 2856143241037514122L;
-	private ArrayList<TLDNameAndDate> TLDs;
+	private ArrayList<String> TLDs;
 	private ArrayList<String> Addresses;
 
 	public TLDTable() {
-		TLDs = new ArrayList<TLDNameAndDate>();
+		TLDs = new ArrayList<String>();
 		Addresses = new ArrayList<String>();
 		
 	}
 
-	public boolean addHost(String TLD, Calendar timeStamp, String address) {
-		return (TLDs.add(new TLDNameAndDate(TLD, timeStamp)) &&	Addresses.add(address));
+	public boolean addHost(String TLD, String address) {
+		return (TLDs.add(TLD) && Addresses.add(address));
 	}
 
 	public void deleteHostByTLD(String TLD, String address) {
 		for (int i = 0; i < TLDs.size(); i++)
-			if (TLDs.get(i).TLD.equals(TLD) && Addresses.get(i).equals(address)) {
+			if (TLDs.get(i).equals(TLD) && Addresses.get(i).equals(address)) {
 				TLDs.remove(i);
 				Addresses.remove(i);
 			}
@@ -50,7 +49,7 @@ public class TLDTable implements Serializable {
 		return addresses;
 	}
 	
-	public TLDNameAndDate getTLD(int i) {
+	public String getTLD(int i) {
 		return TLDs.get(i);
 	}
 	
@@ -58,7 +57,7 @@ public class TLDTable implements Serializable {
 		return Addresses.get(i);
 	}
 
-	public ArrayList<TLDNameAndDate> getAllTLD() {
+	public ArrayList<String> getAllTLD() {
 		return TLDs;
 	}
 
@@ -66,7 +65,7 @@ public class TLDTable implements Serializable {
 		ArrayList<String> retval = new ArrayList<String>();
 
 		for (int i = 0; i < TLDs.size(); i++)
-			if (TLDs.get(i).TLD.equals(TLD))
+			if (TLDs.get(i).equals(TLD))
 				retval.add(Addresses.get(i));
 		return retval;
 	}
@@ -75,7 +74,7 @@ public class TLDTable implements Serializable {
 		ArrayList<String> retval = new ArrayList<String>();
 
 		for (int i = 0; i < TLDs.size(); i++)
-			if (TLDs.get(i).TLD.equals(TLD) && Addresses.get(i).charAt(0)==zone)
+			if (TLDs.get(i).equals(TLD) && Addresses.get(i).charAt(0)==zone)
 				retval.add(Addresses.get(i));
 		return retval;
 
@@ -83,7 +82,7 @@ public class TLDTable implements Serializable {
 	
 	public String getAddressFromTLD(String TLD) {
 		for (int i=0;i<TLDs.size(); i++)
-			if (TLDs.get(i).TLD.equalsIgnoreCase(TLD))
+			if (TLDs.get(i).equalsIgnoreCase(TLD))
 				return Addresses.get(i);
 		return "";
 	}
@@ -94,19 +93,7 @@ public class TLDTable implements Serializable {
 	
 	public void toPrint() {
 		for (int i = 0; i<Addresses.size(); i++) {
-			System.out.println("Address: "+Addresses.get(i)+ " TLD: "+TLDs.get(i).TLD);
-		}
-	}
-	
-	public class TLDNameAndDate implements Serializable {
-		
-		private static final long serialVersionUID = 2793203510412665612L;
-		public String TLD;
-		public Calendar timeStamp;
-		
-		public TLDNameAndDate (String t, Calendar ts) {
-			TLD = t;
-			timeStamp = ts;
+			System.out.println("Address: "+Addresses.get(i)+ " TLD: "+TLDs.get(i));
 		}
 	}
 }
