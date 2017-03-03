@@ -483,7 +483,13 @@ public class DNSServerAgent extends Agent {
 	}
 	
 	public boolean addHost(String hostName, Calendar timeStamp, String address) {
-		return hostTable.add(new Host(hostName, address));
+		boolean isPresent = false;
+		for (int i = 0; i < hostTable.size(); i++)
+			if (hostTable.get(i).getAddress().equals(address) && hostTable.get(i).getName().equals(hostName))
+				isPresent = true;
+		if (!isPresent)
+			hostTable.add(new Host(hostName, address));
+		return !isPresent;
 	}
 	
 	private class Occurrence {
