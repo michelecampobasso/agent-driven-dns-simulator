@@ -79,6 +79,15 @@ public class TLDTable implements Serializable {
 			if (TLDs.get(i).equals(TLD) && Addresses.get(i).charAt(0)==zone)
 				retval.add(Addresses.get(i));
 		return retval;
+	}
+	
+	public ArrayList<String> getAddressesFromTLDByOtherZone(String TLD, char zone) {
+		ArrayList<String> retval = new ArrayList<String>();
+
+		for (int i = 0; i < TLDs.size(); i++)
+			if (TLDs.get(i).equals(TLD) && Addresses.get(i).charAt(0)!=zone)
+				retval.add(Addresses.get(i));
+		return retval;
 
 	}
 	

@@ -95,11 +95,43 @@ public class TopLevelDomainServerAgent_CreateNewHost extends Behaviour {
 					}
 				}
 			}
+			
 			/*
 			 * Itero su tutti i DNS deputati ad avere l'informazione sul nuovo host:
 			 * prima ottengo l'indirizzo dal DF...
 			 */
 			
+			ArrayList<String> chosenDNSsOtherZone = table.getAddressesFromTLDByOtherZone(TLD, myAgent.getAID().getLocalName().charAt(0));
+			for (int i = 0; i<chosenDNSsOtherZone.size(); i++) {
+				
+				template = new DFAgentDescription();
+			    sd = new ServiceDescription();
+			    sd.setType("DNSSERVER");
+			    sd.setName(chosenDNSsOtherZone.get(i));
+			    template.addServices(sd);
+			    all = new SearchConstraints();
+			    all.setMaxResults(new Long(-1));
+			    
+				DFAgentDescription[] result = null;
+				try {
+					result = DFService.search(myAgent, template, all);
+				} catch (FIPAException e) {
+					e.printStackTrace();
+				}
+		        
+				if (result != null) {
+				/*
+				 *  ...e dopo gli inoltro il nuovo host.
+				 */
+			    	ACLMessage proposal = new ACLMessage(ACLMessage.INFORM);
+			    	proposal.setContent(msg.getContent());
+			    	proposal.addReceiver(result[0].getName());
+			    	proposal.setOntology("NEWHOST");
+					System.out.println("TLD Server "+myAgent.getLocalName()+" - forwarding host to add to "+result[0].getName().getLocalName()+".");
+					myAgent.send(proposal);
+				}
+			}
+				
 			for (int i = 0; i<chosenDNSs.size(); i++) {
 				template = new DFAgentDescription();
 			    sd = new ServiceDescription();
