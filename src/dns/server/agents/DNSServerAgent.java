@@ -131,7 +131,8 @@ public class DNSServerAgent extends Agent {
 			        if (result.length!=0)
 			        	// Ottengo tutti i DNS.
 			        	for (int i = 0; i<result.length; i++)
-		        			DNSs.add(result[i].getName());
+			        		if (!result[i].equals(getAID().getLocalName()))
+			        			DNSs.add(result[i].getName());
 			    } catch (final FIPAException fe) {
 			        fe.printStackTrace();
 			    }

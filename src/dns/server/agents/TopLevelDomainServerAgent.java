@@ -113,19 +113,17 @@ public class TopLevelDomainServerAgent extends Agent{
 			        result = DFService.search(this, template, all);
 			        if (result.length!=0) {
 			        	for (int i = 0; i<result.length; i++) {
-			        		// Recupero TUTTI i DNS della zona
-			        		if (result[i].getName().getLocalName().charAt(0)==getAID().getLocalName().charAt(0)) {
-			        			ACLMessage request = new ACLMessage(ACLMessage.REQUEST);
-			        			request.setOntology("YOURTLDPLEASE");
-			        			request.addReceiver(result[i].getName());
-			        			send(request);
+			        		// Recupero TUTTI i DNS
+			        		ACLMessage request = new ACLMessage(ACLMessage.REQUEST);
+			        		request.setOntology("YOURTLDPLEASE");
+			        		request.addReceiver(result[i].getName());
+			        		send(request);
 			        			
-			        			ACLMessage response = blockingReceive(mtDNS, 5000);
-			        			if (response != null) {
-			        				ArrayList<String> resolvedTLDs = (ArrayList<String>)response.getContentObject();
-			        				for (int j = 0; j<resolvedTLDs.size(); j++) 
-			        					TLDTable.addHost(resolvedTLDs.get(j), result[i].getName().getLocalName());
-			        			}
+			        		ACLMessage response = blockingReceive(mtDNS, 5000);
+			        		if (response != null) {
+			        			ArrayList<String> resolvedTLDs = (ArrayList<String>)response.getContentObject();
+			        			for (int j = 0; j<resolvedTLDs.size(); j++) 
+			        				TLDTable.addHost(resolvedTLDs.get(j), result[i].getName().getLocalName());
 			        		}
 			        	}
 			        }

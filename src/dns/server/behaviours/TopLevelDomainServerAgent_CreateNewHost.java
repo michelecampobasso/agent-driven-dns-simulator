@@ -68,12 +68,9 @@ public class TopLevelDomainServerAgent_CreateNewHost extends Behaviour {
 				Collections.shuffle(DNSServerAddresses);
 				
 				for (int i=0; i<DNSQuantity; i++) {
-					if (!table.addHost(TLD, DNSServerAddresses.get(i)))
-						System.out.println("TLD Server "+myAgent.getLocalName()+" - error while adding the host!");
-					else {
-						System.out.println("TLD Server "+myAgent.getLocalName()+" - new TLD, adding it and picking "+DNSServerAddresses.get(i)+" as responsable.");
-						chosenDNSs.add(DNSServerAddresses.get(i));
-					}
+					table.addHost(TLD, DNSServerAddresses.get(i));
+					System.out.println("TLD Server "+myAgent.getLocalName()+" - new TLD, adding it and picking "+DNSServerAddresses.get(i)+" as responsable.");
+					chosenDNSs.add(DNSServerAddresses.get(i));
 				}
 			}
 			else {
@@ -92,12 +89,9 @@ public class TopLevelDomainServerAgent_CreateNewHost extends Behaviour {
 					responsibilyChanged = true;
 					Collections.shuffle(allDNSinZone);
 					for (int i = 0; chosenDNSs.size() < DNSQuantity; i++) {
-						if (!table.addHost(TLD, allDNSinZone.get(i)))
-							System.out.println("TLD Server "+myAgent.getLocalName()+" - error while adding the host!");
-						else {
-							System.out.println("TLD Server "+myAgent.getLocalName()+" - new TLD, adding it and picking "+allDNSinZone.get(i)+" as responsable.");
-							chosenDNSs.add(allDNSinZone.get(i));
-						}
+						table.addHost(TLD, allDNSinZone.get(i));
+						System.out.println("TLD Server "+myAgent.getLocalName()+" - new TLD, adding it and picking "+allDNSinZone.get(i)+" as responsable.");
+						chosenDNSs.add(allDNSinZone.get(i));
 					}
 				}
 			}
