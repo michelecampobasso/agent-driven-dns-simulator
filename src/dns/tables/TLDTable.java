@@ -16,7 +16,7 @@ public class TLDTable implements Serializable {
 	}
 
 	public boolean addHost(String TLD, String address) {
-		if (!TLDs.contains(TLD) && !Addresses.contains(address))
+		if (!(TLDs.contains(TLD) && Addresses.contains(address)))
 			return (TLDs.add(TLD) && Addresses.add(address));
 		return false;
 	}
