@@ -204,9 +204,9 @@ public class TopLevelDomainServerAgent extends Agent{
 		return TLDTable;
 	}
 	
-	public boolean updateTLDTableEntry(String TLD, String address, Calendar timestamp, int position) {
+	public void updateTLDTableEntry(String TLD, String address, Calendar timestamp, int position) {
 		TLDTable.deleteHostByTLD(TLD, address);
-		return TLDTable.addHost(TLD, address);
+		TLDTable.addHost(TLD, address);
 	}
 	
 	public boolean updateTLDTable(ArrayList<String> hosts, String TLD) {

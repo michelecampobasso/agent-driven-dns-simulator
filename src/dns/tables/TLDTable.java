@@ -14,11 +14,10 @@ public class TLDTable implements Serializable {
 		Addresses = new ArrayList<String>();
 		
 	}
-
-	public boolean addHost(String TLD, String address) {
-		if (!(TLDs.contains(TLD) && Addresses.contains(address)))
-			return (TLDs.add(TLD) && Addresses.add(address));
-		return false;
+	
+	public void addHost(String TLD, String address) {
+		TLDs.add(TLD);
+		Addresses.add(address);
 	}
 
 	public void deleteHostByTLD(String TLD, String address) {

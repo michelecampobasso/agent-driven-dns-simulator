@@ -101,13 +101,11 @@ public class TopLevelDomainServerAgent_CreateNewHost extends Behaviour {
 			 * prima ottengo l'indirizzo dal DF...
 			 */
 			
-			ArrayList<String> chosenDNSsOtherZone = table.getAddressesFromTLDByOtherZone(TLD, myAgent.getAID().getLocalName().charAt(0));
-			for (int i = 0; i<chosenDNSsOtherZone.size(); i++) {
-				
+			for (int i = 0; i<chosenDNSs.size(); i++) {
 				template = new DFAgentDescription();
 			    sd = new ServiceDescription();
 			    sd.setType("DNSSERVER");
-			    sd.setName(chosenDNSsOtherZone.get(i));
+			    sd.setName(chosenDNSs.get(i));
 			    template.addServices(sd);
 			    all = new SearchConstraints();
 			    all.setMaxResults(new Long(-1));
@@ -131,12 +129,18 @@ public class TopLevelDomainServerAgent_CreateNewHost extends Behaviour {
 					myAgent.send(proposal);
 				}
 			}
+			
+			/*
+			 * Controllo anche se ci sono altri DNS di altre zone che risolvono 
+			 * quel TLD ed inoltro anche a loro l'informazione
+			 */
+			ArrayList<String> chosenDNSsOtherZone = table.getAddressesFromTLDByOtherZone(TLD, myAgent.getAID().getLocalName().charAt(0));
+			for (int i = 0; i<chosenDNSsOtherZone.size(); i++) {
 				
-			for (int i = 0; i<chosenDNSs.size(); i++) {
 				template = new DFAgentDescription();
 			    sd = new ServiceDescription();
 			    sd.setType("DNSSERVER");
-			    sd.setName(chosenDNSs.get(i));
+			    sd.setName(chosenDNSsOtherZone.get(i));
 			    template.addServices(sd);
 			    all = new SearchConstraints();
 			    all.setMaxResults(new Long(-1));
@@ -152,6 +156,7 @@ public class TopLevelDomainServerAgent_CreateNewHost extends Behaviour {
 				/*
 				 *  ...e dopo gli inoltro il nuovo host.
 				 */
+					System.out.println("SONO IO LO STORNZO BADSTARDO: " +chosenDNSsOtherZone.get(i));
 			    	ACLMessage proposal = new ACLMessage(ACLMessage.INFORM);
 			    	proposal.setContent(msg.getContent());
 			    	proposal.addReceiver(result[0].getName());
