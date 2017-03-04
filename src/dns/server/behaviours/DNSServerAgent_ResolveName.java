@@ -50,7 +50,7 @@ public class DNSServerAgent_ResolveName extends Behaviour {
 	   		 * di un'altra zona tutte le informazioni relative a quel TLD.
 	   		 */
 	   		if (hostAddress == "") {
-	   			System.out.println("#########NO RESOURCE, REQUESTING...");
+	   			System.out.println("DNS Server "+myAgent.getLocalName()+ " - missing "+msg.getContent()+"'s address, querying to peers...");
 		   		template = new DFAgentDescription();
 			    sd = new ServiceDescription();
 			    sd.setType("DNSSERVER");
@@ -68,7 +68,6 @@ public class DNSServerAgent_ResolveName extends Behaviour {
 				if (result != null) {
 					for (int i = 0; i<result.length; i++) {
 						if (result[i].getName().getLocalName().charAt(0)!=myAgent.getLocalName().charAt(0)) {
-							System.out.println("#########HO DEI DNS DI ALTRE ZONE");
 							ACLMessage request = new ACLMessage(ACLMessage.REQUEST);
 							request.setContent(msg.getContent());
 							request.addReceiver(result[0].getName());
@@ -78,14 +77,12 @@ public class DNSServerAgent_ResolveName extends Behaviour {
 							 * Si fa uso di una blockingReceive in quanto si è certi che i DNS ottenuti dal DF 
 							 * sono sicuramente vivi.
 							 */
-							System.out.println("#########RICHIESTA INVIATA");
 							ACLMessage hostInfo = myAgent.blockingReceive(infoMT, 10000);
 							// Il DNS contattato ha le informazioni di risoluzione di quel dato host:
-							System.out.println("#########RISPOSTA RICEVUTA");
 							if (hostInfo != null && !hostInfo.getContent().equalsIgnoreCase("noinfo")) {
 								hostAddress = hostInfo.getContent();
 								hostTable.add(new Host(msg.getContent(), hostAddress));
-								System.out.println("######RESOURCE FOUND");
+								System.out.println("DNS Server "+myAgent.getLocalName()+ " - "+msg.getContent()+"'s address found.");
 								break;
 							}
 						}

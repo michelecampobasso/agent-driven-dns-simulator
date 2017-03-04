@@ -86,7 +86,7 @@ public class TopLevelDomainServerAgent_ResolveName extends Behaviour {
 			        fe.printStackTrace();
 			    }
 	    	} else {
-	    		System.out.println("TLD Server - no DNS Servers available. System is not working, create a new DNS ASAP.");
+	    		System.err.println("TLD Server - no DNS Servers available. System is not working, create a new DNS ASAP.");
 	    		/*
 	    		 * Unlocking Client...
 	    		 */

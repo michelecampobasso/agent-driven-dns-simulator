@@ -175,7 +175,7 @@ public class TopLevelDomainServerAgent extends Agent{
         }
         catch (FIPAException fe) {
             fe.printStackTrace();
-            System.out.println("!!ERROR!! Registration of TopLevelDomainServer to DF failed! System may not work properly.");
+            System.err.println("!!ERROR!! Registration of TopLevelDomainServer to DF failed! System may not work properly.");
         }
         
         this.addBehaviour(new TopLevelDomainServerAgent_ResolveName());
@@ -195,7 +195,7 @@ public class TopLevelDomainServerAgent extends Agent{
 		try {
 			DFService.deregister(this);
 		} catch (FIPAException e) {
-			System.out.println("Problems while deregistering the TLDServer "+getAID().getLocalName()+". System may not work properly.");
+			System.err.println("Problems while deregistering the TLDServer "+getAID().getLocalName()+". System may not work properly.");
 			e.printStackTrace();
 		}
 	}

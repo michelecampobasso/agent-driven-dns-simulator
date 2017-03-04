@@ -22,8 +22,6 @@ public class ClientAgent extends Agent {
 	
     @Override
     protected void setup() {
-    	
-        System.out.println("Client started.");
         
         // Carico gli hosts...
  		try { 
@@ -62,7 +60,7 @@ public class ClientAgent extends Agent {
         }
         catch (FIPAException fe) {
             fe.printStackTrace();
-            System.out.println("!!ERROR!! Registration of Client to DF failed! System may not work properly.");
+            System.err.println("!!ERROR!! Registration of Client to DF failed! System may not work properly.");
         }
         
         this.addBehaviour(new ClientAgent_ResolveName(this, 5000)); //This can run only when the other behaviour has completed TODO implement delays
@@ -75,7 +73,7 @@ public class ClientAgent extends Agent {
 		try {
 			DFService.deregister(this);
 		} catch (FIPAException e) {
-			System.out.println("Problems while deregistering the Client "+getAID().getLocalName()+". System may not work properly.");
+			System.err.println("Problems while deregistering the Client "+getAID().getLocalName()+". System may not work properly.");
 			e.printStackTrace();
 		}
 	}

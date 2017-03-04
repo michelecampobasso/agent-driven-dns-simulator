@@ -31,7 +31,7 @@ public class RootServerAgent extends Agent {
         }
         catch (FIPAException fe) {
             fe.printStackTrace();
-            System.out.println("!!ERROR!! Registration of RootServerAgent to DF failed! System may not work properly.");
+            System.err.println("!!ERROR!! Registration of RootServerAgent to DF failed! System may not work properly.");
         }
         
         //this.addBehaviour(new RootServer_ClosestZone());
@@ -44,7 +44,7 @@ public class RootServerAgent extends Agent {
 		try {
 			DFService.deregister(this);
 		} catch (FIPAException e) {
-			System.out.println("Problems while deregistering the RootServer "+getAID().getLocalName()+". System may not work properly.");
+			System.err.println("Problems while deregistering the RootServer "+getAID().getLocalName()+". System may not work properly.");
 			e.printStackTrace();
 		}
 	}

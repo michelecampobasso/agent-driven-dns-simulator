@@ -1,7 +1,5 @@
 package dns.server.behaviours;
 
-import java.util.Calendar;
-
 import dns.server.agents.DNSServerAgent;
 import jade.core.behaviours.Behaviour;
 import jade.lang.acl.ACLMessage;

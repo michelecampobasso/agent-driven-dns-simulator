@@ -6,7 +6,6 @@ import java.io.FileReader;
 import java.io.IOException;
 import java.security.NoSuchAlgorithmException;
 import java.util.ArrayList;
-import java.util.Calendar;
 import java.util.Collections;
 import java.util.HashMap;
 
@@ -258,7 +257,7 @@ public class DNSServerAgent extends Agent {
 								 hostTable = (ArrayList<Host>)blockingReceive(mtDNS, 5000).getContentObject();
 								 System.out.println(getAID().getLocalName() +" - cloned DNS from the other zone with lowest redoundancy.");
 							} catch (UnreadableException e) {
-								System.out.println(getAID().getLocalName() +" - error while retrieving hostTable from the chosen DNS.");
+								System.err.println(getAID().getLocalName() +" - error while retrieving hostTable from the chosen DNS.");
 								e.printStackTrace();
 							}
 			    		} else
@@ -341,7 +340,7 @@ public class DNSServerAgent extends Agent {
 							 hostTable = (ArrayList<Host>)blockingReceive(mtDNS, 5000).getContentObject();
 							 System.out.println(getAID().getLocalName() +" - cloned DNS in zone with lowest redoundancy.");
 						} catch (UnreadableException e) {
-							System.out.println(getAID().getLocalName() +" - error while retrieving hostTable from the chosen DNS.");
+							System.err.println(getAID().getLocalName() +" - error while retrieving hostTable from the chosen DNS.");
 							e.printStackTrace();
 						}
 		    		} else
@@ -440,7 +439,7 @@ public class DNSServerAgent extends Agent {
         }
         catch (FIPAException fe) {
             fe.printStackTrace();
-            System.out.println("!!ERROR!! Registration of DNSServer to DF failed! System may not work properly.");
+            System.err.println("!!ERROR!! Registration of DNSServer to DF failed! System may not work properly.");
         }
         
         this.addBehaviour(new DNSServerAgent_ResolveName());
@@ -473,7 +472,7 @@ public class DNSServerAgent extends Agent {
 	        }
 			DFService.deregister(this);
 		} catch (FIPAException e) {
-			System.out.println("Problems while deregistering the DNS Server "+getAID().getLocalName()+". System may not work properly.");
+			System.err.println("Problems while deregistering the DNS Server "+getAID().getLocalName()+". System may not work properly.");
 			e.printStackTrace();
 		}
 	}	

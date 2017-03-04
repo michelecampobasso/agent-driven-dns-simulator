@@ -19,17 +19,21 @@ public class DNSServerAgent_Realignment extends Behaviour {
 	public void action() {
 		ACLMessage msg = myAgent.receive(mt);
 		if (msg != null) {
+			/*
+			 * Ricerco l'host nella tabella...
+			 */
 			ArrayList<Host> hostTable = ((DNSServerAgent)myAgent).getHostTable();
 			String hostAddress = "";
-			System.out.println("Received message bruh####################");
 			for (int i=0; i<hostTable.size(); i++) {
 				System.out.println(i);
 				if (hostTable.get(i).getName().equalsIgnoreCase(msg.getContent())) {
 					hostAddress = hostTable.get(i).getAddress();
-					System.out.println("I have!@@@@@@@@@@@@@");
 					break;
 				}
 			}
+			/*
+			 * Se l'ho trovato lo mando, altrimenti comunico di continuare a cercare.
+			 */
 			if (hostAddress == "")
 				hostAddress = "noinfo";
 			ACLMessage reply = msg.createReply();

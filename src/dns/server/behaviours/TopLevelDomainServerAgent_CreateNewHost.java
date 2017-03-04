@@ -156,7 +156,6 @@ public class TopLevelDomainServerAgent_CreateNewHost extends Behaviour {
 				/*
 				 *  ...e dopo gli inoltro il nuovo host.
 				 */
-					System.out.println("SONO IO LO STORNZO BADSTARDO: " +chosenDNSsOtherZone.get(i));
 			    	ACLMessage proposal = new ACLMessage(ACLMessage.INFORM);
 			    	proposal.setContent(msg.getContent());
 			    	proposal.addReceiver(result[0].getName());

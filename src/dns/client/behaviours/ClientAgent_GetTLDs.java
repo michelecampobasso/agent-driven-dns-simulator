@@ -79,7 +79,7 @@ public class ClientAgent_GetTLDs extends TickerBehaviour {
 	    		this.myAgent.send(request);
 	    		pendingRequest = true;
 	    	} else
-		        System.out.println("No suitable services found, retrying in 10 seconds...");
+		        System.err.println("No suitable services found, retrying in 10 seconds...");
 		}
 		// pendingRequest == true
     	else {
@@ -93,7 +93,7 @@ public class ClientAgent_GetTLDs extends TickerBehaviour {
 					// TODO Auto-generated catch block
 					if (msg.getContent().equals(null))
 						closestTLDs = null;
-					System.out.println("!!ERROR!! TLDLatencyTable not received... EMMO'?");
+					System.err.println("!!ERROR!! TLDLatencyTable not received... EMMO'?");
 				}
 		    	
 		    	System.out.println("Client - closest TLD received.");
