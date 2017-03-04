@@ -79,10 +79,10 @@ public class DNSServerAgent_ResolveName extends Behaviour {
 							 * sono sicuramente vivi.
 							 */
 							System.out.println("#########RICHIESTA INVIATA");
-							ACLMessage hostInfo = myAgent.blockingReceive(infoMT);
+							ACLMessage hostInfo = myAgent.blockingReceive(infoMT, 10000);
 							// Il DNS contattato ha le informazioni di risoluzione di quel dato host:
 							System.out.println("#########RISPOSTA RICEVUTA");
-							if (!hostInfo.getContent().equalsIgnoreCase("noinfo")) {
+							if (hostInfo != null && !hostInfo.getContent().equalsIgnoreCase("noinfo")) {
 								hostAddress = hostInfo.getContent();
 								hostTable.add(new Host(msg.getContent(), hostAddress));
 								System.out.println("######RESOURCE FOUND");

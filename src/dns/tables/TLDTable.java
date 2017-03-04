@@ -16,8 +16,16 @@ public class TLDTable implements Serializable {
 	}
 	
 	public void addHost(String TLD, String address) {
-		TLDs.add(TLD);
-		Addresses.add(address);
+		boolean present = false;
+		for (int i = 0; i<TLDs.size(); i++) 
+			if (TLDs.get(i).equalsIgnoreCase(TLD) && Addresses.get(i).equalsIgnoreCase(address)) {
+				present = true;
+				break;
+			}
+		if (!present) {
+			TLDs.add(TLD);
+			Addresses.add(address);
+		}
 	}
 
 	public void deleteHostByTLD(String TLD, String address) {

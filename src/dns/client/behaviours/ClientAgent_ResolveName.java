@@ -86,15 +86,11 @@ public class ClientAgent_ResolveName extends TickerBehaviour {
 		 * TODO: timeout massimo?
 		 */
 		else {
-			ACLMessage msg = myAgent.receive(mt);
+			ACLMessage msg = myAgent.blockingReceive(mt, 15000);
     		if (msg != null) {
     			System.out.println("Client - address of host "+hostToResolve+" is "+msg.getContent()+".");
 		    	pendingRequest=false;
     		}
-    		else
-				block();
 		}
-		
 	}
-
 }

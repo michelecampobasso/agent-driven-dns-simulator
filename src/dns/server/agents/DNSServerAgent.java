@@ -482,7 +482,7 @@ public class DNSServerAgent extends Agent {
 		return hostTable;
 	}
 	
-	public boolean addHost(String hostName, Calendar timeStamp, String address) {
+	public boolean addHost(String hostName, String address) {
 		boolean isPresent = false;
 		for (int i = 0; i < hostTable.size(); i++)
 			if (hostTable.get(i).getAddress().equals(address) && hostTable.get(i).getName().equals(hostName))

@@ -23,10 +23,8 @@ public class DNSServerAgent_CreateNewHost extends Behaviour {
 			System.out.println("DNS Server "+myAgent.getAID().getLocalName()+"- the host's name is "+msg.getContent().split("\\s+")[0]+" and address is: "+msg.getContent().split("\\s+")[1]);
 			
 			// Provo ad aggiungere l'host alla tabella
-			if (((DNSServerAgent)myAgent).addHost(msg.getContent().split("\\s+")[0], Calendar.getInstance(), msg.getContent().split("\\s+")[1]))
-				System.out.println("DNS Server "+myAgent.getAID().getLocalName()+" - host added successfully.");
-			else
-				System.out.println("DNS Server "+myAgent.getAID().getLocalName()+" - error while adding the host!");
+			((DNSServerAgent)myAgent).addHost(msg.getContent().split("\\s+")[0], msg.getContent().split("\\s+")[1]);
+			System.out.println("DNS Server "+myAgent.getAID().getLocalName()+" - host added successfully.");
 		} else
 			block();
 	}
