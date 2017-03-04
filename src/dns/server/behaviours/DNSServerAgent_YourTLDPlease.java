@@ -19,6 +19,9 @@ public class DNSServerAgent_YourTLDPlease extends Behaviour {
 	@Override
 	public void action() {
 		
+		/*
+		 * Ricevo la richiesta di inoltrare l'elenco dei TLD da me risolti.
+		 */
 		ACLMessage msg = myAgent.receive(mt);
     	if (msg != null) {
 	    	System.out.println("DNS server "+myAgent.getAID().getLocalName()+" - received request to give my TLDs to "+msg.getSender().getLocalName()+".");

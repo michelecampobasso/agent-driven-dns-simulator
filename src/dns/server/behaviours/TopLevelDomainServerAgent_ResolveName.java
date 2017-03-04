@@ -36,9 +36,6 @@ public class TopLevelDomainServerAgent_ResolveName extends Behaviour {
 		ACLMessage msg = myAgent.receive(mt);
     	if (msg != null) {
 	    	System.out.println("TLD Server "+myAgent.getAID().getLocalName()+" - received request to resolve "+msg.getContent()+"'s address.");
-	    	/*
-	    	 * Ottengo la tabella contenente i riferimenti ai DNS in base al TLD
-	    	 */
 	    	TLDTable TLDTable = ((TopLevelDomainServerAgent)myAgent).getTLDTable();
 	    	boolean rightZone = true;
 	    	/*
@@ -88,7 +85,7 @@ public class TopLevelDomainServerAgent_ResolveName extends Behaviour {
 	    	} else {
 	    		System.err.println("TLD Server - no DNS Servers available. System is not working, create a new DNS ASAP.");
 	    		/*
-	    		 * Unlocking Client...
+	    		 * Sblocco il Client dalla sua attesa temporizzata se sin da subito so di non poter fornire quest'informazione.
 	    		 */
 	    		ACLMessage unlock = new ACLMessage(ACLMessage.INFORM);
 	    		unlock.setContent("");

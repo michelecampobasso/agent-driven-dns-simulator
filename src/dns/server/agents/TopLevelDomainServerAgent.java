@@ -22,14 +22,12 @@ import jade.lang.acl.UnreadableException;
 public class TopLevelDomainServerAgent extends Agent{
 
 	private static final long serialVersionUID = 1814120770306117557L;
-	//private int zone;
 	
 	private MessageTemplate mtTLD = MessageTemplate.and(MessageTemplate.MatchPerformative(ACLMessage.INFORM), 
 			MessageTemplate.MatchOntology("YOURTABLEPLEASE"));
 	private MessageTemplate mtDNS = MessageTemplate.and(MessageTemplate.MatchPerformative(ACLMessage.INFORM), 
 			MessageTemplate.MatchOntology("YOURTLDPLEASE"));
 	
-	// Questa tabella contiene i riferimenti ai tld ed i rispettivi dns che li risolvono
 	private TLDTable TLDTable = null;
 	
 	private DFAgentDescription template;
@@ -186,10 +184,6 @@ public class TopLevelDomainServerAgent extends Agent{
         this.addBehaviour(new TopLevelDomainServerAgent_NewDNS());
     }	
 
-	/*public int getZone() {
-		return zone;
-	}*/
-	
 	@Override
 	public void takeDown() {
 		try {

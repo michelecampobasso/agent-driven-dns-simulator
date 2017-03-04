@@ -30,7 +30,7 @@ public class ClientAgent extends Agent {
  	        while ((line = br.readLine()) != null)
  	        	hosts.add(line);
  	        br.close();
- 	        // anche quelli aggiunti se questo agente sta venendo avviato in un secondo momento
+ 	        // ...anche quelli aggiunti se questo agente sta venendo avviato in un secondo momento
  	        br = new BufferedReader(new FileReader("added_hosts.txt"));
  	        line = null;
  	        while ((line = br.readLine()) != null)
@@ -63,7 +63,7 @@ public class ClientAgent extends Agent {
             System.err.println("!!ERROR!! Registration of Client to DF failed! System may not work properly.");
         }
         
-        this.addBehaviour(new ClientAgent_ResolveName(this, 5000)); //This can run only when the other behaviour has completed TODO implement delays
+        this.addBehaviour(new ClientAgent_ResolveName(this, 5000));
         this.addBehaviour(new ClientAgent_GetNewHost());
         //this.addBehaviour(new ClientAgent_GetTLDs(this, 10000));
     }

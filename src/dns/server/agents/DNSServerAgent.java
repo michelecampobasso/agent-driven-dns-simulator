@@ -73,9 +73,9 @@ public class DNSServerAgent extends Agent {
 			 * 			1) Se è completo, allora vedo quale server è meno ridondante e lo clono;
 			 * 			2) Se non è completo, carico la differenza;
 			 * 		Non esistono DNS in zona:
-			 * 			3) Se sono completi, clono quello con ridondanza minore;
-			 * 			4) Controllo se dall'altra parte i dati sono completi: se non lo sono, carico la differenza;
-			 * 			5) Se non ne esistono, instanzio un nuovo DNS con metà degli host. 
+			 * 			3) Controllo se dall'altra parte i dati sono completi: se lo sono, carico il meno ridondante;
+			 * 			4) Se non lo sono, carico la differenza;
+			 * 			5) Se non ne esistono, instanzio un nuovo DNS con metà degli host dalla cache di internet.
 			 * 				(se li caricassi tutti, dopo si avrebbero problemi per tutti gli altri casi)
 			 * 			
 			 * 	In tutti i casi sopra menzonati, avviso i TLD di zona delle nuove competenze.
@@ -96,7 +96,7 @@ public class DNSServerAgent extends Agent {
 		        result = DFService.search(this, template, all);
 		        if (result.length!=0) {
 			        /*
-				     * ...ed estraggo la lista degli hosts.
+				     * ...e mi faccio dare la lista degli hosts.
 				     */
 		        	ACLMessage request = new ACLMessage(ACLMessage.REQUEST);
 				    request.setOntology("ALLHOSTSPLEASE");
@@ -114,7 +114,7 @@ public class DNSServerAgent extends Agent {
 		    
 		    if (cachedHostTable != null) {
 		    	/*
-		    	 * Allora possiamo andare.
+		    	 * Ottenuta la cache di internet (utilizzata in extremis)
 		    	 * Controllo la presenza o meno di DNS in zona.
 		    	 */
 		    	template = new DFAgentDescription();
@@ -137,7 +137,7 @@ public class DNSServerAgent extends Agent {
 			    }
 			    ArrayList<AID> localDNSs = new ArrayList<AID>();
 			    for (int i = 0; i<DNSs.size(); i++) 
-			    	// Prendo solo i DNS di zona.
+			    	// Filtro i DNS di zona.
 			    	if (DNSs.get(i).getLocalName().charAt(0)==getAID().getLocalName().charAt(0))
 			    		localDNSs.add(DNSs.get(i));
 			    /*
@@ -325,6 +325,7 @@ public class DNSServerAgent extends Agent {
 		    				hashes.add((int)objHashes[i]);
 		    			int occourrencies = redoundancyCheck.get(hashes.get(0)).qty;
 		    			AID addressToClone = redoundancyCheck.get(hashes.get(0)).address;
+		    			// Nel caso siano pari, prendo il primo...
 		    			for (int i = 1; i<hashes.size(); i++) 
 		    				if (redoundancyCheck.get(hashes.get(i)).qty<occourrencies)
 		    					addressToClone = redoundancyCheck.get(hashes.get(i)).address;
@@ -347,9 +348,11 @@ public class DNSServerAgent extends Agent {
 		    			System.out.println(getAID().getLocalName() +" - populated table with the difference between cache and this zone.");
 			    }
 			    
-			    System.out.println("HostTable of the new DNS:");
-			    for (int i=0; i<hostTable.size(); i++)
-			    	System.out.println(hostTable.get(i).getAddress() + " "+ hostTable.get(i).getName());
+			    /*
+			     * System.out.println("HostTable of the new DNS:");
+			     * for (int i=0; i<hostTable.size(); i++)
+			     *		System.out.println(hostTable.get(i).getAddress() + " "+ hostTable.get(i).getName());
+			     */
 			    
 			    /*
 			     * Avendo riempito la tabella degli hosts, devo comunicare ai TLD le nuove competenze.
@@ -407,7 +410,6 @@ public class DNSServerAgent extends Agent {
 	        	br = new BufferedReader(new FileReader("dnshosts.txt"));
 		        line = null;
 		        while ((line = br.readLine()) != null) {
-	        		// Anche questa avrà bisogno dei timestamp... TODO
 		        	/*
 		        	 * ...e carico nella tabella degli host solo quelli con il TLD corrispondente
 		        	 */

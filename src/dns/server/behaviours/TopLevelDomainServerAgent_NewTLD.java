@@ -19,6 +19,9 @@ public class TopLevelDomainServerAgent_NewTLD extends Behaviour {
 	@Override
 	public void action() {
 		
+		/*
+		 * Ricevuto il messaggio contenente informazioni riguardanti quali DNS risolvono un nuovo TLD.
+		 */
 		ACLMessage msg = myAgent.receive(mt);
 		if (msg != null) {
 			try {

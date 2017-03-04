@@ -15,6 +15,9 @@ public class TopLevelDomainServerAgent_DeletedDNS extends Behaviour {
 	@Override
 	public void action() {
 		
+		/*
+		 * Ricevuto il messaggio che specifica di quale DNS disfarsi in tabella.
+		 */
 		ACLMessage msg = myAgent.receive(mt);
     	if (msg != null) {
     		((TopLevelDomainServerAgent)myAgent).getTLDTable().deleteHost(msg.getSender().getLocalName());

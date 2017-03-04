@@ -24,93 +24,79 @@ public class ClientAgent_GetTLDs extends TickerBehaviour {
 
 	// closestTLDs must be visible to the whole agent...
 	private TLDLatencyTable closestTLDs;
-	private MessageTemplate mt = MessageTemplate.and(MessageTemplate.MatchPerformative(ACLMessage.INFORM), 
-													MessageTemplate.MatchOntology("CLOSESTTLD"));
+	private MessageTemplate mt = MessageTemplate.and(MessageTemplate.MatchPerformative(ACLMessage.INFORM),
+			MessageTemplate.MatchOntology("CLOSESTTLD"));
 	private boolean pendingRequest = false;
 	private ACLMessage request;
 	private DFAgentDescription template;
 	private ServiceDescription sd;
 	private SearchConstraints all;
-	
+
 	@Override
 	public void onStart() {
-		
+
 		request = new ACLMessage(ACLMessage.REQUEST);
 		template = new DFAgentDescription();
-	    sd = new ServiceDescription();
-	    sd.setType("ROOTSERVER");
-	    template.addServices(sd);
-	    all = new SearchConstraints();
-	    all.setMaxResults(new Long(-1));
-
+		sd = new ServiceDescription();
+		sd.setType("ROOTSERVER");
+		template.addServices(sd);
+		all = new SearchConstraints();
+		all.setMaxResults(new Long(-1));
 	}
 
 	@Override
 	protected void onTick() {
-		
+
 		if (!pendingRequest) {
-			
+
 			DFAgentDescription[] result = null;
-		    try {
-		        /*
-		         * 6- Query the DF about the service you look for.
-		         */
-		        result = DFService.search(myAgent, template, all);
-		        AID[] RootServer = new AID[result.length];
-		        for (int i = 0; i < result.length; ++i) {
-		            /*
-		             * 7- Collect found service providers' AIDs.
-		             */
-		            RootServer[i] = result[i].getName();
-		            System.out.println("Client - found RootServer "+RootServer[i].getName());
-		        }
-		    } catch (final FIPAException fe) {
-		        fe.printStackTrace();
-		    }
-		
-		    /*
-		     * If we found at least one agent offering the desired service,
-		     * we try to buy the book using a custom FSM-like behaviour.
-		     */
-		    if (result != null && result.length != 0) {
-	    		request.addReceiver(result[0].getName());
-	    		request.setOntology("CLOSESTTLD");
-	    		System.out.println("Sending request to " + result[0].getName().getName() + " to know the closest TLD..." );
-	    		this.myAgent.send(request);
-	    		pendingRequest = true;
-	    	} else
-		        System.err.println("No suitable services found, retrying in 10 seconds...");
+			try {
+				result = DFService.search(myAgent, template, all);
+				AID[] RootServer = new AID[result.length];
+				for (int i = 0; i < result.length; ++i) {
+					RootServer[i] = result[i].getName();
+					System.out.println("Client - found RootServer " + RootServer[i].getName());
+				}
+			} catch (final FIPAException fe) {
+				fe.printStackTrace();
+			}
+
+			if (result != null && result.length != 0) {
+				request.addReceiver(result[0].getName());
+				request.setOntology("CLOSESTTLD");
+				System.out
+						.println("Sending request to " + result[0].getName().getName() + " to know the closest TLD...");
+				this.myAgent.send(request);
+				pendingRequest = true;
+			} else
+				System.err.println("No suitable services found, retrying in 10 seconds...");
 		}
+
 		// pendingRequest == true
-    	else {
-    		ACLMessage msg = myAgent.receive(mt);
-    		if (msg != null) {
-    			System.out.println("Client - received infos about closest TLD. Reading...");
-	    	
-    			try {
-    				closestTLDs = (TLDLatencyTable) msg.getContentObject();
+		else {
+			ACLMessage msg = myAgent.receive(mt);
+			if (msg != null) {
+				System.out.println("Client - received infos about closest TLD. Reading...");
+
+				try {
+					closestTLDs = (TLDLatencyTable) msg.getContentObject();
 				} catch (UnreadableException e) {
-					// TODO Auto-generated catch block
 					if (msg.getContent().equals(null))
 						closestTLDs = null;
-					System.err.println("!!ERROR!! TLDLatencyTable not received... EMMO'?");
+					System.err.println("!!ERROR!! TLDLatencyTable not received...");
 				}
-		    	
-		    	System.out.println("Client - closest TLD received.");
-		    	this.stop();
-    		} 
-    		else
+
+				System.out.println("Client - closest TLD received.");
+				this.stop();
+			} else
 				block();
-	    } 
+		}
 	}
-	
+
 	@Override
 	public int onEnd() {
-		/*
-		 * Keeping trace of the end...
-		 */
-		((ClientAgent)myAgent).setTLDs(closestTLDs);
-		System.out.println("Client - GetTLDs terminated successfully.");
+
+		((ClientAgent) myAgent).setTLDs(closestTLDs);
 		return 0;
 	}
 

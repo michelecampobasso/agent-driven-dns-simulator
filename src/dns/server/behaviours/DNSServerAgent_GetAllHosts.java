@@ -23,6 +23,9 @@ public class DNSServerAgent_GetAllHosts extends Behaviour {
     	if (msg != null) {
 	    	System.out.println("DNS Server - received request to give my table to "+msg.getSender().getLocalName()+".");
 	    	try {
+	    		/*
+	    		 * ...e gli mando l'intera tabella degli hosts conosciuti. 
+	    		 */
 	    		ACLMessage reply = msg.createReply();
 	    		reply.setOntology("DNSHOSTS");
 				reply.setContentObject(((DNSServerAgent)myAgent).getHostTable());

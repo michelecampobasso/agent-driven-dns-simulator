@@ -54,7 +54,7 @@ public class RootServer_CreateNewHost extends Behaviour {
 		        	/*
 		        	 * Invio il nuovo host ad ogni TLD...
 		        	 * 
-		        	 * ATTENZIONE: sequenzializzo questa operazione.
+		        	 * ATTENZIONE: sequenzializzo l'operazione di informare i TLD del nuovo host.
 		        	 * Questo dal momento che, nel caso si aggiunga un host con un nuovo TLD nel sistema, 
 		        	 * devo dare ai TLD il tempo di propagare le informazioni ai DNS. Se così non fosse, rischierei
 		        	 * di avere informazioni replicate all'interno dei DNS e probabilmente tutti verrebbero scelti casualmente
@@ -82,12 +82,10 @@ public class RootServer_CreateNewHost extends Behaviour {
 		}
 		else
 			block();
-		
 	}
 
 	@Override
 	public boolean done() {
 		return false;
 	}
-
 }

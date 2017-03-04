@@ -3,11 +3,11 @@ package dns.server.behaviours;
 import java.io.IOException;
 
 import dns.tables.TLDLatencyTable;
-import jade.core.behaviours.SimpleBehaviour;
+import jade.core.behaviours.Behaviour;
 import jade.lang.acl.ACLMessage;
 import jade.lang.acl.MessageTemplate;
 
-public class RootServer_ClosestZone extends SimpleBehaviour {
+public class RootServer_ClosestZone extends Behaviour {
 
 	private static final long serialVersionUID = 1L;
 	private TLDLatencyTable closestTLDs; 
@@ -40,7 +40,6 @@ public class RootServer_ClosestZone extends SimpleBehaviour {
 	
 	@Override
 	public boolean done() {
-		// This behaviour never has to terminate. A new Client may come!
 		return false;
 	}
 

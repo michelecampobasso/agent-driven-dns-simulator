@@ -17,6 +17,9 @@ public class TopLevelDomainServerAgent_YourTablePlease extends Behaviour {
 	@Override
 	public void action() {
 		
+		/*
+		 * Ricevo la richiesta di inoltro al pari della mia tabella per la conoscenza di quali TLD sono risolti da quali DNS.
+		 */
 		ACLMessage msg = myAgent.receive(mt);
     	if (msg != null) {
 	    	System.out.println("TLD server "+myAgent.getAID().getLocalName()+" - received request to give my table to "+msg.getSender().getLocalName()+".");
