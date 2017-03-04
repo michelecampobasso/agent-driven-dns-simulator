@@ -47,7 +47,7 @@ public class DNSServerAgent_ResolveName extends Behaviour {
 	   		/*
 	   		 * Nel caso in cui a questo DNS sia stato deputato il ruolo di risolvere gli host con un dato TLD
 	   		 * e questo non possegga le informazioni per risolvere tale host, allora dovrà chiedere ai suoi pari
-	   		 * di un'altra zona tutte le informazioni relative a quel TLD.
+	   		 * l'indirizzo di quell'host.
 	   		 */
 	   		if (hostAddress == "") {
 	   			System.out.println("DNS Server "+myAgent.getLocalName()+ " - missing "+msg.getContent()+"'s address, querying to peers...");
@@ -67,7 +67,7 @@ public class DNSServerAgent_ResolveName extends Behaviour {
 		        
 				if (result != null) {
 					for (int i = 0; i<result.length; i++) {
-						if (result[i].getName().getLocalName().charAt(0)!=myAgent.getLocalName().charAt(0)) {
+						if (!result[i].getName().getLocalName().equalsIgnoreCase(myAgent.getLocalName())) {
 							ACLMessage request = new ACLMessage(ACLMessage.REQUEST);
 							request.setContent(msg.getContent());
 							request.addReceiver(result[0].getName());

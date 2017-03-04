@@ -7,7 +7,6 @@ import java.io.IOException;
 import java.util.ArrayList;
 
 import dns.client.behaviours.*;
-import dns.tables.TLDLatencyTable;
 import jade.core.Agent;
 import jade.domain.DFService;
 import jade.domain.FIPAException;
@@ -18,7 +17,6 @@ public class ClientAgent extends Agent {
 
 	private static final long serialVersionUID = 271669436955865796L;
 	private ArrayList<String> hosts = new ArrayList<String>();
-	public TLDLatencyTable closestTLDs;
 	
     @Override
     protected void setup() {
@@ -65,7 +63,6 @@ public class ClientAgent extends Agent {
         
         this.addBehaviour(new ClientAgent_ResolveName(this, 5000));
         this.addBehaviour(new ClientAgent_GetNewHost());
-        //this.addBehaviour(new ClientAgent_GetTLDs(this, 10000));
     }
     
     @Override
@@ -77,11 +74,6 @@ public class ClientAgent extends Agent {
 			e.printStackTrace();
 		}
 	}
-    
-    
-    public void setTLDs(TLDLatencyTable t) {
-    	closestTLDs = t;
-    }
     
     public ArrayList<String> getAllHosts() {
     	return hosts;

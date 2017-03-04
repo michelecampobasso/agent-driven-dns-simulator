@@ -89,14 +89,8 @@ public class RootServer_ResolveName extends Behaviour {
 		    		request.setOntology("RESOLVE");
 		    		System.out.println("Root Server - sending request to " + TLDServer.getLocalName() + " to resolve the host..." );
 		    		this.myAgent.send(request);
-		        } else {
+		        } else
 		        	System.err.println("Root Server - no TLD Servers available. System is not working, create a new TLD ASAP.");
-		        	ACLMessage unlock = new ACLMessage(ACLMessage.INFORM);
-		    		unlock.setContent("");
-		    		unlock.addReceiver(msg.getSender());
-		    		unlock.setOntology("RESOLVE");
-		    		myAgent.send(unlock);
-		        }
 		    } catch (final FIPAException fe) {
 		        fe.printStackTrace();
 		    }
