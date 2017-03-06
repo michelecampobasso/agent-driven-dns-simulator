@@ -25,7 +25,6 @@ public class DNSServerAgent_Realignment extends Behaviour {
 			ArrayList<Host> hostTable = ((DNSServerAgent)myAgent).getHostTable();
 			String hostAddress = "";
 			for (int i=0; i<hostTable.size(); i++) {
-				System.out.println(i);
 				if (hostTable.get(i).getName().equalsIgnoreCase(msg.getContent())) {
 					hostAddress = hostTable.get(i).getAddress();
 					break;

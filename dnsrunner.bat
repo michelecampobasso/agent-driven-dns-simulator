@@ -15,4 +15,4 @@ RootServer:dns.server.agents.RootServerAgent;^
 231.231.231.232:dns.server.agents.DNSServerAgent();^
 244.244.244.243:dns.server.agents.DNSServerAgent();^
 244.244.244.244:dns.server.agents.DNSServerAgent();^
-GOD:dns.theinternet.TheInternetAgent -gui &
+GOD:dns.theinternet.TheInternetAgent -local-host 192.168.56.1 -local-port 1099 -gui &
