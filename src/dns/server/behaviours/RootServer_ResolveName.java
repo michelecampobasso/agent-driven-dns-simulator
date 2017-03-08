@@ -44,7 +44,7 @@ public class RootServer_ResolveName extends Behaviour {
 		 */
 		ACLMessage msg = myAgent.receive(mt);
     	if (msg != null) {
-	    	System.out.println("Root Server - received request to resolve "+msg.getContent()+"'s address.");
+	    	System.out.println("Root Server - received request to resolve "+msg.getContent()+"'s address by Client "+msg.getSender().getLocalName()+".");
 	   		
 	    	/*
 	    	 * Il RootServer richiede ogni volta quali sono i TLDServer al DF: in questo modo
