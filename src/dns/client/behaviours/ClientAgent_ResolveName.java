@@ -81,7 +81,7 @@ public class ClientAgent_ResolveName extends TickerBehaviour {
 		}
 		// pendingRequest == true
 		else {
-			ACLMessage msg = myAgent.blockingReceive(mt, 10000);
+			ACLMessage msg = myAgent.blockingReceive(mt, 15000);
 			if (msg != null)
 				System.out.println("Client "+myAgent.getLocalName()+" - address of host " + hostToResolve + " is " + msg.getContent() + ".");
 			pendingRequest = false;

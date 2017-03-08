@@ -70,7 +70,7 @@ public class DNSServerAgent_ResolveName extends Behaviour {
 						if (!result[i].getName().getLocalName().equalsIgnoreCase(myAgent.getLocalName())) {
 							ACLMessage request = new ACLMessage(ACLMessage.REQUEST);
 							request.setContent(msg.getContent());
-							request.addReceiver(result[0].getName());
+							request.addReceiver(result[i].getName());
 							request.setOntology("NEEDINFO");
 							myAgent.send(request);
 							/*
